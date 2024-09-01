@@ -43,13 +43,6 @@ Toda atividade que esteja na raia "Em Andamento", para ser transferida para o st
   <tr>
     <td>Kotlin</td>
   </tr>
-  <tr>
-    <td>ECMAScript 2022</td>
-    <td>17.*</td>
-    <td>5</td>
-    <td>3</td>
-    <td>2</td>
-</tr>
 </table>
 
 ### API's Utilizadas:
@@ -60,16 +53,6 @@ Toda atividade que esteja na raia "Em Andamento", para ser transferida para o st
   </tr>
 </table>
 
-### Bibliotecas utulizadas:
-
-<table>
-  <tr>
-  <td>Spring</td>
-  </tr>
-  <tr>
-    <td>React</td>
-  </tr>
-</table>
 
 # Projeto desenvolvido por alunos da:
 <img src="https://www.sptech.school/assets/images/logos/sptech_logo_1.png"></img>
