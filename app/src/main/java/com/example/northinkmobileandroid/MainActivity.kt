@@ -318,9 +318,103 @@ fun LandingPage(modifier: Modifier = Modifier) {
                 }
             }
         }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.White)
+                .padding(vertical = 32.dp)
+        ){
+            Column (
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ){
+                val titleText: AnnotatedString = buildAnnotatedString {
+                    append("Na ")
+                    withStyle(style = SpanStyle(color = Color(0xFFA855F7))){
+                        append("North Ink. ")
+                    }
+                    append(", sua melhor escolha!\nProfissionais, preço e proximidade em um só lugar.")
+                }
+                Text(
+                    text = titleText,
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF3C3C3C),
+                    textAlign = TextAlign.Start,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 30.dp, start = 15.dp)
+                )
+                val partnerText: AnnotatedString = buildAnnotatedString {
+                    append("Depoimento de um dos nossos ")
+                    withStyle(style = SpanStyle(color = Color(0xFFA855F7))) {
+                        append("Parceiros")
+                    }
+                }
+                Text(
+                    text = partnerText,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF3C3C3C),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp)
+                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                ){
+                    Text(
+                        text = "Roberto Otávio de Paulo, 45 anos",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.Black,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    val bussinessText: AnnotatedString = buildAnnotatedString {
+                        append("Proprietário do ")
+                        withStyle(style = SpanStyle(color = Color(0xFFA855F7))){
+                            append("Tatto House")
+                        }
+                        append(" - Santa Cecilia")
+                    }
+                    Text(
+                        text = bussinessText,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.Black,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+                    Text(
+                        text = "Desde que me juntei à North Ink, minha carreira decolou! Esta plataforma revolucionária não apenas me conectou a uma ampla base de clientes ávidos por minha arte, mas também simplificou todo o processo. Com a North Ink, tenho a liberdade de me concentrar no que faço de melhor - criar tatuagens memoráveis - enquanto a plataformame me aproxima de maneira eficaz do público. É como ter um assistente pessoal 24 horas por dia, 7 dias por semana, direcionando clientes de qualidade até minha porta. Estou verdadeiramente grato por fazer parte desta comunidade vibrante e por todo o apoio que recebi da equipe da North Ink. Juntos, estamos transformando sonhos em tinta!",
+                        fontSize = 14.sp,
+                        color = Color.Black,
+                        textAlign = TextAlign.Justify,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 32.dp)
+                    )
+
+                    Image(
+                        painter = painterResource(id = R.drawable.foto_depoimento),
+                        contentDescription = "Foto depoimento",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp)
+                            .clip(RoundedCornerShape(16.dp)),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+            }
+        }
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable

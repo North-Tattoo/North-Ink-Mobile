@@ -13,6 +13,11 @@
         android:theme="@style/Theme.NorthInkMobileAndroid"
         tools:targetApi="31">
         <activity
+            android:name=".ListagemTatuador"
+            android:exported="true"
+            android:label="@string/title_activity_listagem_tatuador"
+            android:theme="@style/Theme.NorthInkMobileAndroid" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
