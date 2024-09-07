@@ -1,4 +1,59 @@
 <resources>
-    <string name="app_name">NorthInkMobileAndroid</string>
+    <string name="app_name">North Ink</string>
     <string name="title_activity_listagem_tatuador">ListagemTatuador</string>
+
+    <string name="landing_title_part_1">ENCONTRE O SEU</string>
+    <string name="landing_title_part_2">TATUADOR</string>
+    <string name="landing_title_part_3">IDEAL.</string>
+
+    <string name="landing_description">
+        Na nossa plataforma, conectamos você aos melhores tatuadores em minutos, prontos para transformar suas ideias em tinta. Explore estilos únicos e faça da sua próxima tatuagem uma experiência inesquecível.
+    </string>
+
+    <string name="landing_button_text">BUSCAR PROFISSIONAIS</string>
+
+    <string name="second_section_phrase_part_1">Nós celebramos a</string>
+    <string name="second_section_phrase_part_2"> arte </string>
+    <string name="second_section_phrase_part_3"> que você veste. </string>
+
+    <string name="second_section_phrase_part_4">Descubra a</string>
+    <string name="second_section_phrase_part_5"> tatuagem </string>
+    <string name="second_section_phrase_part_6">que eleva sua essência.</string>
+
+    <string name="third_section_text_part_1">Descubra os</string>
+    <string name="third_section_text_part_2">artistas</string>
+    <string name="third_section_text_part_3">que não apenas ouvem, mas entendem sua</string>
+    <string name="third_section_text_part_4">história</string>
+
+    <string name="grid_client1">King Tatto</string>
+    <string name="grid_client2">Lotus Atelier</string>
+    <string name="grid_client3">Route Tatto</string>
+
+    <string name="section_footer_title_part_1">Na</string>
+    <string name="section_footer_title_part_2">North Ink.</string>
+    <string name="section_footer_title_part_3">sua melhor escolha!</string>
+    <string name="section_footer_subtitle">Profissionais, preço e proximidade em um só lugar.</string>
+
+    <string name="partner_declaration">Depoimento de um dos nossos </string>
+    <string name="parter_declaration2">Parceiros</string>
+
+    <string name="partner_name">Roberto Otávio de Paulo, 45 anos</string>
+
+    <string name="business_name">Proprietário do  </string>
+    <string name="business_name2">Tatto House</string>
+    <string name="business_name3"> - Santa Cecilia</string>
+
+    <string name="partner_testimonial">
+        Desde que me juntei à North Ink, minha carreira decolou! Esta plataforma revolucionária não apenas me conectou a uma ampla base de clientes ávidos por minha arte, mas também simplificou todo o processo. Com a North Ink, tenho a liberdade de me concentrar no que faço de melhor - criar tatuagens memoráveis - enquanto a plataforma me aproxima de maneira eficaz do público. É como ter um assistente pessoal 24 horas por dia, 7 dias por semana, direcionando clientes de qualidade até minha porta. Estou verdadeiramente grato por fazer parte desta comunidade vibrante e por todo o apoio que recebi da equipe da North Ink. Juntos, estamos transformando sonhos em tinta!
+    </string>
+
+    <string name="testimonial_image_content_desc">Foto depoimento</string>
+
+<!--    Tela de Listagem de Tatuadores -->
+    <string name="listagem_titulo">Encontre o seu artista ideal.</string>
+
+    <string name="label_listagem1">Buscar por nome</string>
+    <string name="label_listagem2">Onde?</string>
+
+    <string name="subtitulo_listagem">Navegue por estilo.</string>
 </resources>

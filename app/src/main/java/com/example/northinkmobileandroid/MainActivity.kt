@@ -1,5 +1,6 @@
 package com.example.northinkmobileandroid
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -31,7 +32,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -59,6 +62,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun LandingPage(modifier: Modifier = Modifier) {
+    val contexto = LocalContext.current
     val scrollState = rememberScrollState()
 
     Column(
@@ -100,11 +104,13 @@ fun LandingPage(modifier: Modifier = Modifier) {
                 verticalArrangement = Arrangement.Center
             ) {
                 val titleText: AnnotatedString = buildAnnotatedString {
-                    append("ENCONTRE O SEU \n\n")
+                    append(stringResource(id = R.string.landing_title_part_1))
+                    append("\n\n")
                     withStyle(style = SpanStyle(color = Color(0xFF9333EA))) {
-                        append("TATUADOR")
+                        append(stringResource(id = R.string.landing_title_part_2))
                     }
-                    append(" IDEAL .")
+                    append(" ")
+                    append(stringResource(id = R.string.landing_title_part_3))
                 }
 
                 Text(
@@ -117,7 +123,7 @@ fun LandingPage(modifier: Modifier = Modifier) {
                     modifier = Modifier.padding(bottom = 30.dp)
                 )
                 Text(
-                    text = "Na nossa plataforma, conectamos você aos melhores tatuadores em minutos, prontos para transformar suas ideias em tinta.\nExplore estilos únicos e faça da sua próxima tatuagem uma experiência inesquecível. ",
+                    text = stringResource(id = R.string.landing_description),
                     fontSize = 16.sp,
                     color = Color.White,
                     textAlign = TextAlign.Start,
@@ -128,14 +134,18 @@ fun LandingPage(modifier: Modifier = Modifier) {
                 )
 
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        val telaListagem = Intent(contexto, ListagemTatuador::class.java)
+
+                        contexto.startActivity(telaListagem)
+                    },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9333EA)),
                     shape = RoundedCornerShape(10.dp),
                     modifier = Modifier
                         .height(70.dp)
                         .width(230.dp)
                 ) {
-                    Text(text = "BUSCAR PROFISSIONAIS", color = Color.White)
+                    Text(text = stringResource(id = R.string.landing_button_text), color = Color.White)
                 }
             }
         }
@@ -150,7 +160,7 @@ fun LandingPage(modifier: Modifier = Modifier) {
                 )
                 .fillMaxWidth()
                 .padding(vertical = 16.dp)
-                .height(800.dp)
+                .height(400.dp)
         ) {
             Column(
                 modifier = Modifier
@@ -159,16 +169,21 @@ fun LandingPage(modifier: Modifier = Modifier) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 val phraseText: AnnotatedString = buildAnnotatedString {
-                    append("Nós celebramos a ")
+                    append(stringResource(id = R.string.second_section_phrase_part_1))
+                    append(" ")
                     withStyle(style = SpanStyle(color = Color(0xFF0A030F))) {
-                        append("arte\n")
+                        append(stringResource(id = R.string.second_section_phrase_part_2))
                     }
-                    append("o que você veste.\n")
-                    append("Descubra a ")
+                    append(" ")
+                    append(stringResource(id = R.string.second_section_phrase_part_3))
+                    append("\n")
+                    append(stringResource(id = R.string.second_section_phrase_part_4))
+                    append(" ")
                     withStyle(style = SpanStyle(color = Color(0xFF0A030F))) {
-                        append("tatuagem")
+                        append(stringResource(id = R.string.second_section_phrase_part_5))
                     }
-                    append(" que eleva sua essência.")
+                    append(" ")
+                    append(stringResource(id = R.string.second_section_phrase_part_6))
                 }
                 Text(
                     text = phraseText,
@@ -232,13 +247,16 @@ fun LandingPage(modifier: Modifier = Modifier) {
                         .align(Alignment.Center)
                 ) {
                     val textohome: AnnotatedString = buildAnnotatedString {
-                        append("Descubra os ")
+                        append(stringResource(id = R.string.third_section_text_part_1))
+                        append(" ")
                         withStyle(style = SpanStyle(color = Color(0xFF0A030F))) {
-                            append("artistas")
+                            append(stringResource(id = R.string.third_section_text_part_2))
                         }
-                        append(" que não apenas ouvem, mas entendem sua ")
+                        append(" ")
+                        append(stringResource(id = R.string.third_section_text_part_3))
+                        append(" ")
                         withStyle(style = SpanStyle(color = Color(0xFF0A030F))) {
-                            append("história")
+                            append(stringResource(id = R.string.third_section_text_part_4))
                         }
                         append(".")
                     }
@@ -270,7 +288,7 @@ fun LandingPage(modifier: Modifier = Modifier) {
                                     .clip(RoundedCornerShape(16.dp))
                             )
                             Text(
-                                text = "King Tatto",
+                                text = stringResource(id = R.string.grid_client1),
                                 fontSize = 14.sp,
                                 color = Color.Black,
                                 modifier = Modifier.padding(top = 8.dp)
@@ -289,7 +307,7 @@ fun LandingPage(modifier: Modifier = Modifier) {
                                     .clip(RoundedCornerShape(16.dp))
                             )
                             Text(
-                                text = "Lotus Atelier",
+                                text = stringResource(id = R.string.grid_client2),
                                 fontSize = 14.sp,
                                 color = Color.Black,
                                 modifier = Modifier.padding(top = 8.dp)
@@ -308,7 +326,7 @@ fun LandingPage(modifier: Modifier = Modifier) {
                                     .clip(RoundedCornerShape(16.dp))
                             )
                             Text(
-                                text = "Route Tatto",
+                                text = stringResource(id = R.string.grid_client3),
                                 fontSize = 14.sp,
                                 color = Color.Black,
                                 modifier = Modifier.padding(top = 8.dp)
@@ -331,11 +349,15 @@ fun LandingPage(modifier: Modifier = Modifier) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ){
                 val titleText: AnnotatedString = buildAnnotatedString {
-                    append("Na ")
+                    append(stringResource(id = R.string.section_footer_title_part_1))
+                    append(" ")
                     withStyle(style = SpanStyle(color = Color(0xFFA855F7))){
-                        append("North Ink. ")
+                        append(stringResource(id = R.string.section_footer_title_part_2))
                     }
-                    append(", sua melhor escolha!\nProfissionais, preço e proximidade em um só lugar.")
+                    append(" ")
+                    append(stringResource(id = R.string.section_footer_title_part_3))
+                    append("\n")
+                    append(stringResource(id = R.string.section_footer_subtitle))
                 }
                 Text(
                     text = titleText,
@@ -348,9 +370,10 @@ fun LandingPage(modifier: Modifier = Modifier) {
                         .padding(bottom = 30.dp, start = 15.dp)
                 )
                 val partnerText: AnnotatedString = buildAnnotatedString {
-                    append("Depoimento de um dos nossos ")
+                    append(stringResource(id = R.string.partner_declaration))
+                    append(" ")
                     withStyle(style = SpanStyle(color = Color(0xFFA855F7))) {
-                        append("Parceiros")
+                        append(stringResource(id = R.string.parter_declaration2))
                     }
                 }
                 Text(
@@ -369,7 +392,7 @@ fun LandingPage(modifier: Modifier = Modifier) {
                         .padding(horizontal = 16.dp)
                 ){
                     Text(
-                        text = "Roberto Otávio de Paulo, 45 anos",
+                        text = stringResource(id = R.string.partner_name),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Medium,
                         color = Color.Black,
@@ -377,11 +400,13 @@ fun LandingPage(modifier: Modifier = Modifier) {
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                     val bussinessText: AnnotatedString = buildAnnotatedString {
-                        append("Proprietário do ")
+                        append(stringResource(id = R.string.business_name))
+                        append(" ")
                         withStyle(style = SpanStyle(color = Color(0xFFA855F7))){
-                            append("Tatto House")
+                            append(stringResource(id = R.string.business_name2))
                         }
-                        append(" - Santa Cecilia")
+                        append(" ")
+                        append(stringResource(id = R.string.business_name3))
                     }
                     Text(
                         text = bussinessText,
@@ -392,7 +417,7 @@ fun LandingPage(modifier: Modifier = Modifier) {
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
                     Text(
-                        text = "Desde que me juntei à North Ink, minha carreira decolou! Esta plataforma revolucionária não apenas me conectou a uma ampla base de clientes ávidos por minha arte, mas também simplificou todo o processo. Com a North Ink, tenho a liberdade de me concentrar no que faço de melhor - criar tatuagens memoráveis - enquanto a plataformame me aproxima de maneira eficaz do público. É como ter um assistente pessoal 24 horas por dia, 7 dias por semana, direcionando clientes de qualidade até minha porta. Estou verdadeiramente grato por fazer parte desta comunidade vibrante e por todo o apoio que recebi da equipe da North Ink. Juntos, estamos transformando sonhos em tinta!",
+                        text = stringResource(id = R.string.partner_testimonial),
                         fontSize = 14.sp,
                         color = Color.Black,
                         textAlign = TextAlign.Justify,

@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import com.example.northinkmobileandroid.ui.theme.NorthInkMobileAndroidTheme
 import java.time.format.TextStyle
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
@@ -52,10 +53,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.northinkmobileandroid.ui.theme.NorthInkMobileAndroidTheme
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 
 
@@ -111,7 +114,7 @@ fun TelaListagemTatuador(modifier: Modifier = Modifier) {
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "Encontre o seu artista ideal.",
+                    text = stringResource(id = R.string.listagem_titulo),
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
@@ -122,13 +125,13 @@ fun TelaListagemTatuador(modifier: Modifier = Modifier) {
                     modifier = Modifier.fillMaxWidth()
                 )  {
                     CustomOutlinedTextField(
-                        label = "Buscar por nome",
+                        label = stringResource(id = R.string.label_listagem1),
                         modifier = Modifier
                             .weight(1f)
                             .padding(end = 8.dp)
                     )
                     CustomOutlinedTextField(
-                        label = "Onde?",
+                        label = stringResource(id = R.string.label_listagem2),
                         modifier = Modifier
                             .weight(1f)
                             .padding(start = 8.dp)
@@ -149,7 +152,7 @@ fun TelaListagemTatuador(modifier: Modifier = Modifier) {
                 contentScale = ContentScale.Crop
             )
             Text(
-                text = "Navegue por estilo.",
+                text = stringResource(id = R.string.subtitulo_listagem),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White,
@@ -166,8 +169,120 @@ fun TelaListagemTatuador(modifier: Modifier = Modifier) {
                     "Pontilhismo", "Realismo") // Descrições das imagens
             )
         }
+        SessaoCardsTatuadores()
     }
 }
+@Composable
+fun SessaoCardsTatuadores() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White)
+            .height(800.dp)
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "Os melhores profissionais em um só lugar.",
+            color = Color(0xFFA855F7),
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+
+        // Exemplo de Card de Profissional
+        CardProfissional(
+            nome = "João Silva",
+            endereco = "Rua das Flores, 123 - São Paulo, SP",
+            estilos = listOf("Blackwork", "Aquarela", "Realismo"),
+            fotoTatuador = R.drawable.foto_perfil, // ID do recurso da foto do tatuador
+            fotosTatuagens = listOf(R.drawable.tatuagem_card1, R.drawable.tatuagem_card2, R.drawable.tatuagem_card3) // IDs das tatuagens
+        )
+    }
+}
+
+@Composable
+fun CardProfissional(
+    nome: String,
+    endereco: String,
+    estilos: List<String>,
+    fotoTatuador: Int,
+    fotosTatuagens: List<Int>
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .background(Color(0xFFE9EDF3)),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(8.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            // Fotos das Tatuagens
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                fotosTatuagens.forEach { foto ->
+                    Image(
+                        painter = painterResource(id = foto),
+                        contentDescription = "Foto da tatuagem",
+                        modifier = Modifier
+                            .size(80.dp)
+                            .clip(RoundedCornerShape(8.dp)),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Informações do Tatuador
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(id = fotoTatuador),
+                    contentDescription = "Foto do Tatuador",
+                    modifier = Modifier
+                        .size(80.dp)
+                        .clip(CircleShape),
+                    contentScale = ContentScale.Crop
+                )
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                Column {
+                    Text(
+                        text = nome,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black
+                    )
+                    Text(
+                        text = endereco,
+                        fontSize = 14.sp,
+                        color = Color.Gray
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    // Lista de Estilos
+                    estilos.forEach { estilo ->
+                        Text(
+                            text = estilo,
+                            fontSize = 14.sp,
+                            color = Color.DarkGray
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomOutlinedTextField(label: String, modifier: Modifier = Modifier) {
@@ -204,13 +319,18 @@ fun SimpleImageCarousel(
             .fillMaxWidth()
             .horizontalScroll(rememberScrollState())
     ) {
+        Spacer(modifier = Modifier.width(16.dp))
         images.forEachIndexed { index, image ->
+
+            var isTextVisible by remember { mutableStateOf(false) }
+
             Box(
                 modifier = Modifier
-                    .padding(8.dp, top = 180.dp)
+                    .padding(8.dp, top = 180.dp, end = 8.dp)
                     .size(150.dp) // Ajuste o tamanho conforme necessário
                     .clip(RoundedCornerShape(8.dp))
                     .background(Color.Black.copy(alpha = 0.6f)) // Adiciona sombra
+                    .clickable { isTextVisible = !isTextVisible } // Alterna visibilidade ao clicar
             ) {
                 Image(
                     painter = painterResource(id = image),
@@ -219,18 +339,26 @@ fun SimpleImageCarousel(
                         .fillMaxSize(),
                     contentScale = ContentScale.Crop
                 )
-                Text(
-                    text = imageDescriptions[index],
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(16.dp)
-                        .background(Color.Black.copy(alpha = 0.6f))
-                        .padding(8.dp)
-                )
+                
+                if (isTextVisible){
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.Black.copy(alpha = 0.8f))
+                    ){
+                        Text(
+                            text = imageDescriptions[index],
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier
+                                .align(Alignment.Center),
+                                fontSize = 18.sp
+                        )
+                    }
+                }
             }
         }
+        Spacer(modifier = Modifier.width(16.dp))
     }
 }
 
