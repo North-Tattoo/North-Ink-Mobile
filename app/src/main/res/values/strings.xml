@@ -56,4 +56,10 @@
     <string name="label_listagem2">Onde?</string>
 
     <string name="subtitulo_listagem">Navegue por estilo.</string>
+    <string name="subtitulo_card">Os Melhores Profissionais Aqui .</string>
+
+<!--   Informações Card Listagem-->
+    <string name="card_nome">João Silva</string>
+    <string name="card_endereco">Rua das Flores, 123 - São Paulo, SP</string>
+    <string name="card_taxa">R$ 345,00</string>
 </resources>

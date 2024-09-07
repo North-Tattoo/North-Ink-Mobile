@@ -56,10 +56,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Paid
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
+
 
 
 class ListagemTatuador : ComponentActivity() {
@@ -153,8 +156,8 @@ fun TelaListagemTatuador(modifier: Modifier = Modifier) {
             )
             Text(
                 text = stringResource(id = R.string.subtitulo_listagem),
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
+                fontSize = 25.sp,
+                fontWeight = FontWeight.Medium,
                 color = Color.White,
                 modifier = Modifier
                     .align(Alignment.TopStart)
@@ -169,7 +172,17 @@ fun TelaListagemTatuador(modifier: Modifier = Modifier) {
                     "Pontilhismo", "Realismo") // Descrições das imagens
             )
         }
-        SessaoCardsTatuadores()
+        Text(
+            text = stringResource(id = R.string.subtitulo_card),
+            color = Color(0xFFA855F7),
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(top = 30.dp, bottom = 60.dp, start = 15.dp)
+        )
+
+        repeat(5) { // Exemplo: repete os cards 5 vezes
+            SessaoCardsTatuadores()
+        }
     }
 }
 @Composable
@@ -178,23 +191,18 @@ fun SessaoCardsTatuadores() {
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.White)
-            .height(800.dp)
+            .height(700.dp)
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = "Os melhores profissionais em um só lugar.",
-            color = Color(0xFFA855F7),
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
+
 
         // Exemplo de Card de Profissional
         CardProfissional(
-            nome = "João Silva",
-            endereco = "Rua das Flores, 123 - São Paulo, SP",
-            estilos = listOf("Blackwork", "Aquarela", "Realismo"),
+            nome = stringResource(id = R.string.card_nome),
+            endereco = stringResource(id = R.string.card_endereco),
+            taxaMinima = stringResource(id = R.string.card_taxa),
+            estilos = listOf("Blackwork", "Aquarela", "Realismo", "Oriental"),
             fotoTatuador = R.drawable.foto_perfil, // ID do recurso da foto do tatuador
             fotosTatuagens = listOf(R.drawable.tatuagem_card1, R.drawable.tatuagem_card2, R.drawable.tatuagem_card3) // IDs das tatuagens
         )
@@ -205,6 +213,7 @@ fun SessaoCardsTatuadores() {
 fun CardProfissional(
     nome: String,
     endereco: String,
+    taxaMinima: String,
     estilos: List<String>,
     fotoTatuador: Int,
     fotosTatuagens: List<Int>
@@ -212,36 +221,37 @@ fun CardProfissional(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
-            .background(Color(0xFFE9EDF3)),
-        shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(8.dp)
+            .size(width = 400.dp, height = 600.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFFDADADA)
+        )
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
             // Fotos das Tatuagens
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 fotosTatuagens.forEach { foto ->
                     Image(
                         painter = painterResource(id = foto),
                         contentDescription = "Foto da tatuagem",
                         modifier = Modifier
-                            .size(80.dp)
+                            .size(300.dp)
                             .clip(RoundedCornerShape(8.dp)),
                         contentScale = ContentScale.Crop
                     )
                 }
             }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
+            Spacer(modifier = Modifier.height(30.dp))
             // Informações do Tatuador
             Row(
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
             ) {
                 Image(
                     painter = painterResource(id = fotoTatuador),
@@ -261,27 +271,108 @@ fun CardProfissional(
                         fontWeight = FontWeight.Bold,
                         color = Color.Black
                     )
-                    Text(
-                        text = endereco,
-                        fontSize = 14.sp,
-                        color = Color.Gray
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    // Lista de Estilos
-                    estilos.forEach { estilo ->
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.LocationOn,
+                            contentDescription = "Localização",
+                            tint = Color(0xFFA855F7),
+                            modifier = Modifier
+                                .size(20.dp)
+//                                .padding(end = 10.dp)
+                        )
                         Text(
-                            text = estilo,
+                            text = endereco,
                             fontSize = 14.sp,
-                            color = Color.DarkGray
+                            color = Color.Black
                         )
                     }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Paid,
+                            contentDescription = "Taxa",
+                            tint = Color(0xFFA855F7),
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Text(
+                            text = "Taxa mínima: $taxaMinima",
+                            fontSize = 14.sp,
+                            color = Color.Black,
+                            fontWeight = FontWeight.Medium,
+                            modifier = Modifier.padding(top = 4.dp, start = 5.dp)
+                        )
+                    }
+                }
+            }
+
+                    Spacer(modifier = Modifier.height(30.dp))
+
+                    // Lista de Estilos
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .horizontalScroll(rememberScrollState()),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        estilos.forEach { estilo ->
+                            Box(
+                                modifier = Modifier
+                                    .background(Color(0xFF581C87), RoundedCornerShape(8.dp))
+                                    .widthIn(min = 90.dp)
+                            ){
+                                Text(
+                                    text = estilo,
+                                    fontSize = 14.sp,
+                                    color = Color.White,
+                                    modifier = Modifier
+                                        .align(Alignment.Center)
+//
+                                )
+                            }
+                    }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            // Botões
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Button(
+                    onClick = { /* Ação para Conversar com Tatuador */ },
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFA855F7)
+                    )
+                ) {
+                    Text(
+                        text = "Chat com Tatuador",
+                        color = Color.White
+                    )
+                }
+                Button(
+                    onClick = { /* Ação para Ver Portfólio */ },
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFA855F7)
+                    )
+                ) {
+                    Text(
+                        text = "Ver Portfólio",
+                        color = Color.White
+                    )
                 }
             }
         }
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -327,7 +418,7 @@ fun SimpleImageCarousel(
             Box(
                 modifier = Modifier
                     .padding(8.dp, top = 180.dp, end = 8.dp)
-                    .size(150.dp) // Ajuste o tamanho conforme necessário
+                    .size(250.dp)
                     .clip(RoundedCornerShape(8.dp))
                     .background(Color.Black.copy(alpha = 0.6f)) // Adiciona sombra
                     .clickable { isTextVisible = !isTextVisible } // Alterna visibilidade ao clicar
