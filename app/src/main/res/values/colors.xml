@@ -7,4 +7,11 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="bg_north">#F5F5F5</color>
+    <color name="text_primario">#3C3C3c</color>
+    <color name="corTexto">#5B5B5B</color>
+    <color name="corBotao">#9333EA</color>
+    <color name="cor_deCima">#9333EA</color>
+    <color name="cor_deBaixo">#FEC0FF</color>
 </resources>
+

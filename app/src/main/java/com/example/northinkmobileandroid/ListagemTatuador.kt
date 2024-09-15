@@ -1,5 +1,6 @@
 package com.example.northinkmobileandroid
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -18,7 +19,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Text
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.OutlinedTextField
@@ -37,32 +37,26 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.northinkmobileandroid.ui.theme.NorthInkMobileAndroidTheme
-import java.time.format.TextStyle
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.example.northinkmobileandroid.ui.theme.NorthInkMobileAndroidTheme
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.ui.unit.Dp
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Paid
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Portrait
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Whatsapp
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
-
 
 
 class ListagemTatuador : ComponentActivity() {
@@ -83,6 +77,36 @@ class ListagemTatuador : ComponentActivity() {
 fun TelaListagemTatuador(modifier: Modifier = Modifier) {
     val scrollState = rememberScrollState()
 
+//    val navItems = listOf(
+//        BottomNavItem("Home", Icons.Filled.Home),
+//        BottomNavItem("Pesquisa", Icons.Filled.Search)
+//    )
+//    val selectedItem = remember { mutableStateOf(0) }
+//
+//    Scaffold(
+//        bottomBar = {
+//            BottomAppBar(
+//                containerColor = Color(0xFFA855F7),
+//                contentColor = Color.White,
+//                modifier = Modifier
+//                    .height(120.dp) // Ajuste a altura conforme necessário
+//                    .padding(top = 50.dp)
+//            ) {
+//                navItems.forEachIndexed { index, item ->
+//                    IconButton(
+//                        onClick = { selectedItem.value = index },
+//                        modifier = Modifier.weight(1f)
+//                    ) {
+//                        Icon(
+//                            imageVector = item.icon,
+//                            contentDescription = item.label,
+//                            tint = if (selectedItem.value == index) Color.White else Color.LightGray
+//                        )
+//                    }
+//                }
+//            }
+//        }
+//    ) { innerPadding ->
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -184,7 +208,11 @@ fun TelaListagemTatuador(modifier: Modifier = Modifier) {
             SessaoCardsTatuadores()
         }
     }
+//}
 }
+
+data class BottomNavItem(val label: String, val icon: ImageVector)
+
 @Composable
 fun SessaoCardsTatuadores() {
     Column(
@@ -201,9 +229,9 @@ fun SessaoCardsTatuadores() {
         CardProfissional(
             nome = stringResource(id = R.string.card_nome),
             endereco = stringResource(id = R.string.card_endereco),
-            taxaMinima = stringResource(id = R.string.card_taxa),
+            precoMinimo = stringResource(id = R.string.card_taxa),
             estilos = listOf("Blackwork", "Aquarela", "Realismo", "Oriental"),
-            fotoTatuador = R.drawable.foto_perfil, // ID do recurso da foto do tatuador
+            fotoTatuador = R.drawable.grid_home3, // ID do recurso da foto do tatuador
             fotosTatuagens = listOf(R.drawable.tatuagem_card1, R.drawable.tatuagem_card2, R.drawable.tatuagem_card3) // IDs das tatuagens
         )
     }
@@ -213,11 +241,12 @@ fun SessaoCardsTatuadores() {
 fun CardProfissional(
     nome: String,
     endereco: String,
-    taxaMinima: String,
+    precoMinimo: String,
     estilos: List<String>,
     fotoTatuador: Int,
     fotosTatuagens: List<Int>
 ) {
+    val contexto = LocalContext.current
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -279,9 +308,10 @@ fun CardProfissional(
                             contentDescription = "Localização",
                             tint = Color(0xFFA855F7),
                             modifier = Modifier
-                                .size(20.dp)
-//                                .padding(end = 10.dp)
+                                .size(15.dp)
+//
                         )
+                        Spacer(modifier = Modifier.width(4.dp))
                         Text(
                             text = endereco,
                             fontSize = 14.sp,
@@ -295,14 +325,16 @@ fun CardProfissional(
                             imageVector = Icons.Filled.Paid,
                             contentDescription = "Taxa",
                             tint = Color(0xFFA855F7),
-                            modifier = Modifier.size(20.dp)
+                            modifier = Modifier.size(15.dp)
+
                         )
+                        Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = "Taxa mínima: $taxaMinima",
+                            text = "Preço mínimo: $precoMinimo",
                             fontSize = 14.sp,
                             color = Color.Black,
                             fontWeight = FontWeight.Medium,
-                            modifier = Modifier.padding(top = 4.dp, start = 5.dp)
+
                         )
                     }
                 }
@@ -350,21 +382,37 @@ fun CardProfissional(
                         containerColor = Color(0xFFA855F7)
                     )
                 ) {
+                    Icon(
+                        imageVector = Icons.Filled.Whatsapp, // Substitua isso pelo ícone correto
+                        contentDescription = "WhatsApp",
+                        tint = Color.White,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Chat com Tatuador",
+                        text = "Conversar",
                         color = Color.White
                     )
                 }
                 Button(
-                    onClick = { /* Ação para Ver Portfólio */ },
+                    onClick = { val telaPerfilArtista = Intent(contexto, PerfilArtista::class.java)
+
+                        contexto.startActivity(telaPerfilArtista) },
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFFA855F7)
                     )
                 ) {
+                    Icon(
+                        imageVector = Icons.Filled.Person, // Substitua isso pelo ícone correto
+                        contentDescription = "Perfil",
+                        tint = Color.White,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Ver Portfólio",
+                        text = "Ver Perfil",
                         color = Color.White
                     )
                 }
@@ -430,7 +478,7 @@ fun SimpleImageCarousel(
                         .fillMaxSize(),
                     contentScale = ContentScale.Crop
                 )
-                
+
                 if (isTextVisible){
                     Box(
                         modifier = Modifier

@@ -8,7 +8,16 @@
       <SelectionState runConfigName="ListagemTatuador">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="MainActivity">
+      <SelectionState runConfigName="PerfilArtista">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="EntrarContato">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="FeedArtista">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="AmbienteTrabalho">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

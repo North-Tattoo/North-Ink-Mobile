@@ -49,7 +49,7 @@
 
     <string name="testimonial_image_content_desc">Foto depoimento</string>
 
-<!--    Tela de Listagem de Tatuadores -->
+    <!--    Tela de Listagem de Tatuadores -->
     <string name="listagem_titulo">Encontre o seu artista ideal.</string>
 
     <string name="label_listagem1">Buscar por nome</string>
@@ -58,8 +58,38 @@
     <string name="subtitulo_listagem">Navegue por estilo.</string>
     <string name="subtitulo_card">Os Melhores Profissionais Aqui .</string>
 
-<!--   Informações Card Listagem-->
-    <string name="card_nome">João Silva</string>
-    <string name="card_endereco">Rua das Flores, 123 - São Paulo, SP</string>
+    <!--   Informações Card Listagem-->
+    <string name="card_nome">Marcela Aoki</string>
+    <string name="card_endereco">Rua das Flores, 123</string>
     <string name="card_taxa">R$ 345,00</string>
+    <string name="title_activity_ambiente_trabalho">AmbienteTrabalho</string>
+    <string name="title_activity_entrar_contato">EntrarContato</string>
+    <string name="title_activity_feed_artista">FeedArtista</string>
+    <string name="title_activity_perfil_artista">PerfilArtista</string>
+
+<!--    Tela Perfil Artista -->
+    <string name="titulo_perfil_artista">Conheça o artista, explore estilos.</string>
+    <string name="voltar_perfil_artista">Voltar</string>
+    <string name="valor_perfil_artista">Preço mínimo: R$ 345,00</string>
+    <string name="tempo_perfil_artista">Experiência: 2 anos</string>
+    <string name="bio_perfil_artista">Biografia</string>
+    <string name="bio_texto_perfil_artista">Com uma década de dedicação e paixão pela arte da tatuagem, Marcela Aoki se estabeleceu como uma das tatuadoras mais respeitadas e talentosas do cenário nacional. Desde que iniciou sua jornada em 2014, Marcela tem transformado pele em verdadeiras obras de arte, unindo técnica apurada e criatividade única.</string>
+    <string name="estilos_perfil_artista">Estilos</string>
+    <string name="contato_perfil_artista">Entrar em Contato</string>
+
+<!--    Tela entrar em contato -->
+    <string name="fale_entrar_contato">Fale com Marcela através do WhatsApp</string>
+
+<!--    Tela feed Artista -->
+    <string name="titulo_feed_artista">Explorar Feed do Artista.</string>
+
+<!--    Tela Ambiente de Trabalho-->
+    <string name="trabalho_ambiente_trabalho">Ambiente de Trabalho.</string>
+    <string name="estudio_ambiente_trabalho">ROUTE TATTOO</string>
+    <string name="descricao_ambiente_trabalho">Descrição</string>
+    <string name="descricao_texto_ambiente_trabalho">O Route Tatto Studio é mais do que apenas um estúdio de tatuagem; é um santuário para a expressão criativa. Localizado em um prédio histórico renovado, nosso espaço combina elementos industriais modernos com toques de arte urbana, criando um ambiente único e inspirador.</string>
+    <string name="redes_ambiente_trabalho">Redes Sociais</string>
+    <string name="instagram_ambiente_trabalho">Me acompanhe no Instagram!</string>
+    <string name="endereco_ambiente_trabalho">Endereço</string>
+    <string name="endereco_completo">Rua das Flores, 301 - Vila Carrão</string>
 </resources>
