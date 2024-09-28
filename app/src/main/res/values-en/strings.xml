@@ -1,0 +1,95 @@
+<resources>
+    <string name="app_name" translatable="false">North Ink</string>
+    <string name="title_activity_listagem_tatuador">ListagemTatuador</string>
+
+    <string name="landing_title_part_1">FIND YOUR</string>
+    <string name="landing_title_part_2">IDEAL</string>
+    <string name="landing_title_part_3">TATTOO ARTIST.</string>
+
+    <string name="landing_description">
+        On our platform, we connect you with the best tattoo artists in minutes, ready to turn your ideas into ink. Explore unique styles and make your next tattoo an unforgettable experience.
+    </string>
+
+    <string name="landing_button_text">SEARCH PROFESSIONALS</string>
+
+    <string name="second_section_phrase_part_1">We celebrate the</string>
+    <string name="second_section_phrase_part_2"> art </string>
+    <string name="second_section_phrase_part_3"> you wear. </string>
+
+    <string name="second_section_phrase_part_4">Discover the</string>
+    <string name="second_section_phrase_part_5"> tattoo </string>
+    <string name="second_section_phrase_part_6">that elevates your essence.</string>
+
+    <string name="third_section_text_part_1">Discover the</string>
+    <string name="third_section_text_part_2">artists</string>
+    <string name="third_section_text_part_3">who not only listen but understand your</string>
+    <string name="third_section_text_part_4">story</string>
+
+    <string name="grid_client1">King Tattoo</string>
+    <string name="grid_client2">Lotus Atelier</string>
+    <string name="grid_client3">Route Tattoo</string>
+
+    <string name="section_footer_title_part_1">At</string>
+    <string name="section_footer_title_part_2">North Ink.</string>
+    <string name="section_footer_title_part_3">your best choice!</string>
+    <string name="section_footer_subtitle">Professionals, price, and proximity all in one place.</string>
+
+    <string name="partner_declaration">Testimony from one of our </string>
+    <string name="parter_declaration2">Partners</string>
+
+    <string name="partner_name">Roberto Otávio de Paulo, 45 years old</string>
+
+    <string name="business_name">Owner of  </string>
+    <string name="business_name2">Tattoo House</string>
+    <string name="business_name3"> - Santa Cecilia</string>
+
+    <string name="partner_testimonial">
+        Since joining North Ink, my career has taken off! This revolutionary platform has not only connected me to a wide base of clients eager for my art but has also simplified the whole process. With North Ink, I have the freedom to focus on what I do best - creating memorable tattoos - while the platform effectively brings me closer to the public. It\'s like having a personal assistant 24/7, guiding quality clients to my door. I am truly grateful to be part of this vibrant community and for all the support I\'ve received from the North Ink team. Together, we\'re turning dreams into ink!
+    </string>
+
+    <string name="testimonial_image_content_desc">Testimonial photo</string>
+
+    <!-- Tattoo Artist Listing Screen -->
+    <string name="listagem_titulo">Find your ideal artist.</string>
+
+    <string name="label_listagem1">Search by name</string>
+    <string name="label_listagem2">Where?</string>
+
+    <string name="subtitulo_listagem">Browse by style.</string>
+    <string name="subtitulo_card">The Best Professionals Here.</string>
+
+    <!-- Card Information Listing -->
+    <string name="card_nome">Marcela Aoki</string>
+    <string name="card_endereco">123 Flower Street</string>
+    <string name="card_taxa">$345.00</string>
+    <string name="title_activity_ambiente_trabalho">Working Environment</string>
+    <string name="title_activity_entrar_contato">Contact</string>
+    <string name="title_activity_feed_artista">Artist Feed</string>
+    <string name="title_activity_perfil_artista">Artist Profile</string>
+
+    <!-- Artist Profile Screen -->
+    <string name="titulo_perfil_artista">Meet the artist, explore styles.</string>
+    <string name="voltar_perfil_artista">Back</string>
+    <string name="valor_perfil_artista">Minimum price: $345.00</string>
+    <string name="tempo_perfil_artista">Experience: 2 years</string>
+    <string name="bio_perfil_artista">Biography</string>
+    <string name="bio_texto_perfil_artista">With a decade of dedication and passion for the art of tattooing, Marcela Aoki has established herself as one of the most respected and talented tattoo artists on the national scene. Marcela has turned skin into true works of art, combining refined technique and unique creativity.</string>
+    <string name="estilos_perfil_artista">Styles</string>
+    <string name="contato_perfil_artista">Contact</string>
+
+    <!-- Contact Screen -->
+    <string name="fale_entrar_contato">Talk to Marcela via WhatsApp</string>
+
+    <!-- Artist Feed Screen -->
+    <string name="titulo_feed_artista">Explore Artist\'s Feed.</string>
+
+    <!-- Working Environment Screen -->
+    <string name="trabalho_ambiente_trabalho">Working Environment.</string>
+    <string name="estudio_ambiente_trabalho">ROUTE TATTOO</string>
+    <string name="descricao_ambiente_trabalho">Description</string>
+    <string name="descricao_texto_ambiente_trabalho">The Route Tattoo Studio is more than just a tattoo studio; it\'s a sanctuary for creative expression. Located in a renovated historic building, our space combines modern industrial elements with touches of urban art, creating a unique and inspiring environment.</string>
+    <string name="redes_ambiente_trabalho">Social Media</string>
+    <string name="instagram_ambiente_trabalho">Follow me on Instagram!</string>
+    <string name="endereco_ambiente_trabalho">Address</string>
+    <string name="endereco_completo">301 Flower Street - Vila Carrão</string>
+</resources>

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">North Ink</string>
+    <string name="app_name" translatable="false">North Ink</string>
     <string name="title_activity_listagem_tatuador">ListagemTatuador</string>
 
     <string name="landing_title_part_1">ENCONTRE O SEU</string>
@@ -67,23 +67,23 @@
     <string name="title_activity_feed_artista">FeedArtista</string>
     <string name="title_activity_perfil_artista">PerfilArtista</string>
 
-<!--    Tela Perfil Artista -->
+    <!--    Tela Perfil Artista -->
     <string name="titulo_perfil_artista">Conheça o artista, explore estilos.</string>
     <string name="voltar_perfil_artista">Voltar</string>
     <string name="valor_perfil_artista">Preço mínimo: R$ 345,00</string>
     <string name="tempo_perfil_artista">Experiência: 2 anos</string>
     <string name="bio_perfil_artista">Biografia</string>
-    <string name="bio_texto_perfil_artista">Com uma década de dedicação e paixão pela arte da tatuagem, Marcela Aoki se estabeleceu como uma das tatuadoras mais respeitadas e talentosas do cenário nacional. Desde que iniciou sua jornada em 2014, Marcela tem transformado pele em verdadeiras obras de arte, unindo técnica apurada e criatividade única.</string>
+    <string name="bio_texto_perfil_artista">Com uma década de dedicação e paixão pela arte da tatuagem, Marcela Aoki se estabeleceu como uma das tatuadoras mais respeitadas e talentosas do cenário nacional. Marcela tem transformado pele em verdadeiras obras de arte, unindo técnica apurada e criatividade única.</string>
     <string name="estilos_perfil_artista">Estilos</string>
     <string name="contato_perfil_artista">Entrar em Contato</string>
 
-<!--    Tela entrar em contato -->
+    <!--    Tela entrar em contato -->
     <string name="fale_entrar_contato">Fale com Marcela através do WhatsApp</string>
 
-<!--    Tela feed Artista -->
+    <!--    Tela feed Artista -->
     <string name="titulo_feed_artista">Explorar Feed do Artista.</string>
 
-<!--    Tela Ambiente de Trabalho-->
+    <!--    Tela Ambiente de Trabalho-->
     <string name="trabalho_ambiente_trabalho">Ambiente de Trabalho.</string>
     <string name="estudio_ambiente_trabalho">ROUTE TATTOO</string>
     <string name="descricao_ambiente_trabalho">Descrição</string>
@@ -92,4 +92,9 @@
     <string name="instagram_ambiente_trabalho">Me acompanhe no Instagram!</string>
     <string name="endereco_ambiente_trabalho">Endereço</string>
     <string name="endereco_completo">Rua das Flores, 301 - Vila Carrão</string>
+    <string name="title_activity_main2">MainActivity2</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_activity_home">Home</string>
 </resources>

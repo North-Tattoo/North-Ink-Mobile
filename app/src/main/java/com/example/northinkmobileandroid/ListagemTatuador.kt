@@ -59,54 +59,23 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 
 
-class ListagemTatuador : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            NorthInkMobileAndroidTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    TelaListagemTatuador(modifier = Modifier.padding(innerPadding))
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun TelaListagemTatuador(modifier: Modifier = Modifier) {
-    val scrollState = rememberScrollState()
-
-//    val navItems = listOf(
-//        BottomNavItem("Home", Icons.Filled.Home),
-//        BottomNavItem("Pesquisa", Icons.Filled.Search)
-//    )
-//    val selectedItem = remember { mutableStateOf(0) }
-//
-//    Scaffold(
-//        bottomBar = {
-//            BottomAppBar(
-//                containerColor = Color(0xFFA855F7),
-//                contentColor = Color.White,
-//                modifier = Modifier
-//                    .height(120.dp) // Ajuste a altura conforme necessário
-//                    .padding(top = 50.dp)
-//            ) {
-//                navItems.forEachIndexed { index, item ->
-//                    IconButton(
-//                        onClick = { selectedItem.value = index },
-//                        modifier = Modifier.weight(1f)
-//                    ) {
-//                        Icon(
-//                            imageVector = item.icon,
-//                            contentDescription = item.label,
-//                            tint = if (selectedItem.value == index) Color.White else Color.LightGray
-//                        )
-//                    }
+//class ListagemTatuador : ComponentActivity() {
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        enableEdgeToEdge()
+//        setContent {
+//            NorthInkMobileAndroidTheme {
+//                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+//                    TelaListagemTatuador(modifier = Modifier.padding(innerPadding))
 //                }
 //            }
 //        }
-//    ) { innerPadding ->
+//    }
+//}
+
+@Composable
+fun ListagemTatuador(modifier: Modifier = Modifier) {
+    val scrollState = rememberScrollState()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -503,10 +472,10 @@ fun SimpleImageCarousel(
 
 
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview2() {
-    NorthInkMobileAndroidTheme {
-        TelaListagemTatuador()
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun GreetingPreview2() {
+//    NorthInkMobileAndroidTheme {
+//        TelaListagemTatuador()
+//    }
+//}
