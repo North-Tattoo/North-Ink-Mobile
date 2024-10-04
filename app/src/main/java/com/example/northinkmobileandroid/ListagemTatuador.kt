@@ -1,10 +1,6 @@
 package com.example.northinkmobileandroid
 
 import android.content.Intent
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -22,7 +18,6 @@ import androidx.compose.material3.Text
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,7 +28,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.northinkmobileandroid.ui.theme.NorthInkMobileAndroidTheme
@@ -45,33 +39,16 @@ import androidx.compose.runtime.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Paid
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Portrait
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Whatsapp
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
-
-
-//class ListagemTatuador : ComponentActivity() {
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        enableEdgeToEdge()
-//        setContent {
-//            NorthInkMobileAndroidTheme {
-//                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-//                    TelaListagemTatuador(modifier = Modifier.padding(innerPadding))
-//                }
-//            }
-//        }
-//    }
-//}
+import androidx.navigation.NavHostController
 
 @Composable
 fun ListagemTatuador(modifier: Modifier = Modifier) {
@@ -85,7 +62,7 @@ fun ListagemTatuador(modifier: Modifier = Modifier) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .height(800.dp)
+                .height(750.dp)
         ){
             Image(
                 painter = painterResource(id = R.mipmap.fundo_listagem_),
@@ -99,7 +76,7 @@ fun ListagemTatuador(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .size(200.dp)
                     .align(Alignment.TopStart)
-                    .offset(y = (-30).dp)
+                    .offset(y = (-50).dp)
                     .padding(20.dp)
             )
             Column(
@@ -139,7 +116,7 @@ fun ListagemTatuador(modifier: Modifier = Modifier) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(800.dp)
+                .height(750.dp)
         ){
             Image(
                 painter = painterResource(id = R.mipmap.fundo_listagem2),
@@ -200,8 +177,8 @@ fun SessaoCardsTatuadores() {
             endereco = stringResource(id = R.string.card_endereco),
             precoMinimo = stringResource(id = R.string.card_taxa),
             estilos = listOf("Blackwork", "Aquarela", "Realismo", "Oriental"),
-            fotoTatuador = R.drawable.grid_home3, // ID do recurso da foto do tatuador
-            fotosTatuagens = listOf(R.drawable.tatuagem_card1, R.drawable.tatuagem_card2, R.drawable.tatuagem_card3) // IDs das tatuagens
+            fotoTatuador = R.drawable.grid_home3,
+            fotosTatuagens = listOf(R.drawable.tatuagem_card1, R.drawable.tatuagem_card2, R.drawable.tatuagem_card3)
         )
     }
 }
@@ -364,9 +341,7 @@ fun CardProfissional(
                     )
                 }
                 Button(
-                    onClick = { val telaPerfilArtista = Intent(contexto, PerfilArtista::class.java)
-
-                        contexto.startActivity(telaPerfilArtista) },
+                    onClick = {},
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(
@@ -472,10 +447,3 @@ fun SimpleImageCarousel(
 
 
 
-//@Preview(showBackground = true)
-//@Composable
-//fun GreetingPreview2() {
-//    NorthInkMobileAndroidTheme {
-//        TelaListagemTatuador()
-//    }
-//}

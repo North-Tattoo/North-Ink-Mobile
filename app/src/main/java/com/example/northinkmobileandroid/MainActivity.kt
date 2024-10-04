@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
@@ -59,9 +60,10 @@ fun BarraInferiorNavegacao(
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
-    val selectedIcon = remember { mutableStateOf("home") } // Estado para rastrear o ícone selecionado
+    val selectedIcon = remember { mutableStateOf("home") }
     val iconColor = Color(0xFF581C87) // Cor dos ícones
     val cardColor = Color(0xFFFAF5FF) // Cor de fundo dos cartões
+    val purpleBarColor = Color(0xFF9333EA)
 
     Box(modifier = modifier.fillMaxSize().background(Color.Transparent)) {
         NavHost(
@@ -70,7 +72,7 @@ fun BarraInferiorNavegacao(
             modifier = Modifier.fillMaxSize()
         ) {
             composable("home") {
-                Home()
+                Home(navController = navController)
             }
             composable("listagem") {
                 ListagemTatuador()
@@ -79,77 +81,84 @@ fun BarraInferiorNavegacao(
                 PerfilArtista()
             }
         }
-        Row(
+        Card(
             modifier = Modifier
-                .align(Alignment.BottomCenter) // Alinha a Row no centro da parte inferior
-                .fillMaxWidth() // Garante que a Row ocupe toda a largura
-                .height(46.dp)
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth(),
+            shape = RoundedCornerShape(topStart = 25.dp, topEnd = 25.dp),
+            colors = CardDefaults.cardColors(containerColor = cardColor)
         ) {
-            // Card para Home
-            Card(
-                modifier = Modifier.weight(1f),
-                shape = RectangleShape,
-                colors = CardDefaults.cardColors(containerColor = cardColor)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(46.dp)
             ) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center // Centraliza o conteúdo
+                // Card para Home
+                Card(
+                    modifier = Modifier.weight(1f),
+                    shape = RectangleShape,
+                    colors = CardDefaults.cardColors(containerColor = cardColor)
                 ) {
-                    IconButton(
-                        onClick = {
-                            navController.navigate("home")
-                            selectedIcon.value = "home"
-                        }
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
                     ) {
-                        Icon(
-                            imageVector = Icons.Filled.Home,
-                            contentDescription = "Home",
-                            tint = iconColor,
-                            modifier = Modifier.size(30.dp)
-                        )
+                        IconButton(
+                            onClick = {
+                                navController.navigate("home")
+                                selectedIcon.value = "home"
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Home,
+                                contentDescription = "Home",
+                                tint = iconColor,
+                                modifier = Modifier.size(30.dp)
+                            )
+                        }
                     }
                 }
-            }
 
-            // Card para Listagem
-            Card(
-                modifier = Modifier.weight(1f),
-                shape = RectangleShape,
-                colors = CardDefaults.cardColors(containerColor = cardColor)
-            ) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center // Centraliza o conteúdo
+                // Card para Listagem
+                Card(
+                    modifier = Modifier.weight(1f),
+                    shape = RectangleShape,
+                    colors = CardDefaults.cardColors(containerColor = cardColor)
                 ) {
-                    IconButton(onClick = { navController.navigate("listagem") }) {
-                        Icon(
-                            imageVector = Icons.Filled.Search,
-                            contentDescription = "Listagem",
-                            tint = iconColor,
-                            modifier = Modifier.size(30.dp)
-                        )
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center // Centraliza o conteúdo
+                    ) {
+                        IconButton(onClick = { navController.navigate("listagem") }) {
+                            Icon(
+                                imageVector = Icons.Filled.Search,
+                                contentDescription = "Listagem",
+                                tint = iconColor,
+                                modifier = Modifier.size(30.dp)
+                            )
+                        }
                     }
                 }
-            }
 
-            // Card para Perfil
-            Card(
-                modifier = Modifier.weight(1f),
-                shape = RectangleShape,
-                colors = CardDefaults.cardColors(containerColor = cardColor)
-            )
-            {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center // Centraliza o conteúdo
-                ) {
-                    IconButton(onClick = { navController.navigate("perfil") }) {
-                        Icon(
-                            imageVector = Icons.Filled.Person,
-                            contentDescription = "Perfil",
-                            tint = iconColor,
-                            modifier = Modifier.size(30.dp)
-                        )
+                // Card para Perfil
+                Card(
+                    modifier = Modifier.weight(1f),
+                    shape = RectangleShape,
+                    colors = CardDefaults.cardColors(containerColor = cardColor)
+                )
+                {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        IconButton(onClick = { navController.navigate("perfil") }) {
+                            Icon(
+                                imageVector = Icons.Filled.Person,
+                                contentDescription = "Perfil",
+                                tint = iconColor,
+                                modifier = Modifier.size(30.dp)
+                            )
+                        }
                     }
                 }
             }

@@ -6,9 +6,7 @@
     <string name="landing_title_part_2">TATUADOR</string>
     <string name="landing_title_part_3">IDEAL.</string>
 
-    <string name="landing_description">
-        Na nossa plataforma, conectamos você aos melhores tatuadores em minutos, prontos para transformar suas ideias em tinta. Explore estilos únicos e faça da sua próxima tatuagem uma experiência inesquecível.
-    </string>
+    <string name="landing_description">DESCUBRA TATUADORES INCRIVEIS E TRANSFORME SUAS IDEIA EM ARTE.</string>
 
     <string name="landing_button_text">BUSCAR PROFISSIONAIS</string>
 
@@ -90,11 +88,7 @@
     <string name="descricao_texto_ambiente_trabalho">O Route Tatto Studio é mais do que apenas um estúdio de tatuagem; é um santuário para a expressão criativa. Localizado em um prédio histórico renovado, nosso espaço combina elementos industriais modernos com toques de arte urbana, criando um ambiente único e inspirador.</string>
     <string name="redes_ambiente_trabalho">Redes Sociais</string>
     <string name="instagram_ambiente_trabalho">Me acompanhe no Instagram!</string>
-    <string name="endereco_ambiente_trabalho">Endereço</string>
+    <string name="endereco_ambiente_trabalho">Endereço do Estudio</string>
     <string name="endereco_completo">Rua das Flores, 301 - Vila Carrão</string>
-    <string name="title_activity_main2">MainActivity2</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
-    <string name="title_activity_home">Home</string>
+
 </resources>

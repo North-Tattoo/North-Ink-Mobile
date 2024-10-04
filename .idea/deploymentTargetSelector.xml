@@ -11,13 +11,13 @@
       <SelectionState runConfigName="PerfilArtista">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="FeedArtista">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
       <SelectionState runConfigName="AmbienteTrabalho">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
       <SelectionState runConfigName="MainActivity">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="Home">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

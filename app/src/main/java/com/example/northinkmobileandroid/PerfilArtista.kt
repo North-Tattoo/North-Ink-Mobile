@@ -1,169 +1,237 @@
 package com.example.northinkmobileandroid
 
 import android.content.Intent
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Photo
-import androidx.compose.material.icons.filled.Portrait
 import androidx.compose.material.icons.filled.Whatsapp
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.northinkmobileandroid.ui.theme.NorthInkMobileAndroidTheme
-import androidx.compose.material3.*
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 
-class PerfilArtista : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            NorthInkMobileAndroidTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    TelaPerfilArtista(
-                        name = stringResource(id = R.string.card_nome),
-                        modifier = Modifier.padding(innerPadding)
+@Composable
+fun PerfilArtista(modifier: Modifier = Modifier) {
+    val contexto = LocalContext.current
+
+    var selectedTab by remember { mutableStateOf("Tattos") }
+
+    val iconColor = Color(0xFF581C87)
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
+
+        Column(
+            modifier = Modifier
+                .height(207.dp)
+                .fillMaxWidth()
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            Color(0xFF9333EA),
+                            Color(0xFFFEC0FF)
+                        )
+                    )
+                )
+        ) {
+
+            IconButton(
+                onClick = { },
+                modifier = Modifier
+                    .align(Alignment.Start)
+                    .padding(8.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Voltar",
+                    tint = Color.Black
+                )
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 50.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.grid_home3),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(100.dp)
+                        .clip(CircleShape)
+                )
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                // Nome e informações
+                Column(
+                    modifier = Modifier.weight(1f),
+                ) {
+                    Text(
+                        text = "name",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black
+                    )
+                    Text(
+                        text = stringResource(id = R.string.valor_perfil_artista),
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Medium,
+                        textAlign = TextAlign.Start,
+                        color = Color.Black,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                    Text(
+                        text = stringResource(id = R.string.tempo_perfil_artista),
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Medium,
+                        textAlign = TextAlign.Start,
+                        color = Color.Black,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .width(200.dp)
+                        .clickable { selectedTab = "Tattos" }
+                ) {
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Photo,
+                            contentDescription = "Tattos",
+                            tint = if (selectedTab == "Tattos") iconColor else Color.Gray,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Tattos",
+                            fontSize = 14.sp,
+                            color = if (selectedTab == "Tattos") iconColor else Color.Gray
+                        )
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .width(200.dp)
+                            .height(2.dp)
+                            .background(if (selectedTab == "Tattos") iconColor else Color.Transparent)
+                    )
+                }
+
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .width(200.dp)
+                        .clickable { selectedTab = "Informações" }
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Info,
+                            contentDescription = "Informações",
+                            tint = if (selectedTab == "Informações") iconColor else Color.Gray,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Informações",
+                            fontSize = 14.sp,
+                            color = if (selectedTab == "Informações") iconColor else Color.Gray
+                        )
+                    }
+                    Box(
+                        modifier = Modifier
+                            .width(200.dp)
+                            .height(2.dp)
+                            .background(if (selectedTab == "Informações") iconColor else Color.Transparent)
                     )
                 }
             }
         }
-    }
-}
-
-@Composable
-fun TelaPerfilArtista(name: String, modifier: Modifier = Modifier) {
-    val contexto = LocalContext.current
-    // Fundo claro para toda a tela
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(color = colorResource(id = R.color.bg_north))
-    ) {
-        }
-
-        // Centralizar o bloco com gradiente
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
             modifier = Modifier
-                .fillMaxSize()
-                .padding(12.dp)
+                .fillMaxWidth()
+                .background(Color.White)
         ) {
-            Text(
-                text = stringResource(id = R.string.titulo_perfil_artista),
-                fontSize = 23.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF3C3C3C),
-                modifier = Modifier
-                    .padding(top = 10.dp, bottom = 20.dp),
-                textAlign = TextAlign.Center
-            )
-
-            // Cartão com gradiente
-            Card(
-                shape = RoundedCornerShape(20.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp)
-                    .width(700.dp)
-                    .shadow(14.dp * 2)
-            ) {
-                Box(
+            if (selectedTab == "Tattos") {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
                     modifier = Modifier
-                        .background(
-                            brush = Brush.verticalGradient(
-                                colors = listOf(
-                                    Color(0xFF9333EA),
-                                    Color(0xFFFEC0FF)
-                                )
-                            )
-                        )
-                        .height(700.dp)
-                        .padding(10.dp)
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(1.5.dp),
+                    horizontalArrangement = Arrangement.spacedBy(1.5.dp)
                 ) {
-                    Column(
-                        horizontalAlignment = Alignment.Start
-                    ) {
-                        // ROW para separar a imagem do artista e as informações
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.fillMaxWidth()
-                                .padding(start = 10.dp, top = 25.dp, bottom = 15.dp)
-                        ) {
-                            // Imagem do Artista
-                            Image(
-                                painter = painterResource(id = R.drawable.grid_home3), // substitua com sua imagem
-                                contentDescription = null,
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier
-                                    .size(100.dp)
-                                    .clip(CircleShape)
-                            )
-
-                            Spacer(modifier = Modifier.width(16.dp))
-
-                            // Nome e informações
-                            Column(
-                                verticalArrangement = Arrangement.Center,
-                                modifier = Modifier.weight(1f),
-                            ) {
-                                Text(
-                                    text = name,
-                                    fontSize = 20.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.Black
-                                )
-                                Text(
-                                    text = stringResource(id = R.string.valor_perfil_artista),
-                                    fontSize = 15.sp,
-                                    fontWeight = FontWeight.Medium,
-                                    textAlign = TextAlign.Start,
-                                    color = Color.Black,
-                                    modifier = Modifier.padding(top = 4.dp)
-                                )
-                                Text(
-                                    text = stringResource(id = R.string.tempo_perfil_artista),
-                                    fontSize = 15.sp,
-                                    fontWeight = FontWeight.Medium,
-                                    textAlign = TextAlign.Start,
-                                    color = Color.Black,
-//                                  color = colorResource(id = R.color.text_primario),
-                                    modifier = Modifier.padding(top = 4.dp)
-                                )
-                            }
-                        }
-
-                        // Bio do artista
+                    items(
+                        listOf(
+                            R.drawable.tatuagem_card1,
+                            R.drawable.tatuagem_card2,
+                            R.drawable.tatuagem_card3,
+                            R.drawable.tatuagem_card1
+                        )
+                    ) { imageRes ->
+                        Image(
+                            painter = painterResource(id = imageRes),
+                            contentDescription = null
+                        )
+                    }
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .background(Color.White)
+                ) {
+                    item {
                         Column(
                             modifier = Modifier.padding(top = 38.dp, start = 16.dp, end = 16.dp)
                         ) {
@@ -174,17 +242,15 @@ fun TelaPerfilArtista(name: String, modifier: Modifier = Modifier) {
                                 modifier = Modifier.padding(bottom = 15.dp),
                                 fontWeight = FontWeight.Medium
                             )
-                            Spacer(modifier = Modifier.width(8.dp)) // Espaço entre os textos
+                            Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 text = stringResource(id = R.string.bio_texto_perfil_artista),
                                 fontSize = 14.sp,
                                 color = Color.Black,
-                                modifier = Modifier.padding(top = 0.dp), // Ajuste o padding conforme necessário
+                                modifier = Modifier.padding(top = 0.dp),
                                 textAlign = TextAlign.Start
                             )
                         }
-
-                        // Estilos
                         Text(
                             text = stringResource(id = R.string.estilos_perfil_artista),
                             fontSize = 20.sp,
@@ -192,20 +258,28 @@ fun TelaPerfilArtista(name: String, modifier: Modifier = Modifier) {
                             color = Color.Black,
                             modifier = Modifier
                                 .padding(top = 20.dp, start = 15.dp)
-
                         )
 
-
                         LazyVerticalGrid(
-                            columns = GridCells.Fixed(3), // Define 3 colunas na grade
+                            columns = GridCells.Fixed(3),
                             modifier = Modifier
                                 .padding(8.dp)
-                                .height(80.dp), // Ajuste a altura conforme necessário
+                                .height(80.dp),
                             contentPadding = PaddingValues(8.dp),
                             verticalArrangement = Arrangement.spacedBy(8.dp),
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            items(listOf("Traço Fino", "Pontilhismo", "Aquarela", "Realismo", "Geometria", "Minimalista")) { estilo ->
+                            items(
+                                listOf(
+                                    "Traço Fino",
+                                    "Pontilhismo",
+                                    "Aquarela",
+                                    "Realismo",
+                                    "Geometria",
+                                    "Minimalista"
+                                )
+                            )
+                            { estilo ->
                                 // Botões não clicáveis, usando Box para simular um botão
                                 Box(
                                     modifier = Modifier
@@ -220,55 +294,144 @@ fun TelaPerfilArtista(name: String, modifier: Modifier = Modifier) {
                             }
                         }
 
-                        Row(
+                        Column(
+                            horizontalAlignment = Alignment.Start,
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 10.dp, end = 10.dp, top = 30.dp),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                .background(Color.White)
+                                .padding(20.dp, top = 25.dp)
+                                .height(600.dp)
                         ) {
-                            Button(
-                                onClick = { val telaEntrarContato = Intent(contexto, EntrarContato::class.java)
+                            // Linha preta para separar os blocos
+                            Box(
+                                modifier = Modifier
+                                    .width(320.dp)
+                                    .height(1.dp)
+                                    .background(Color.Gray)
+                            )
+                            Spacer(modifier = Modifier.height(50.dp))
+                            Text(
+                                text = stringResource(id = R.string.endereco_ambiente_trabalho),
+                                fontSize = 20.sp,
+                                color = Color.Black,
+                                modifier = Modifier.padding(bottom = 15.dp),
+                                fontWeight = FontWeight.Medium
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = stringResource(id = R.string.endereco_completo),
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.Gray
+                            )
+                            Spacer(modifier = Modifier.height(20.dp))
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                // Imagem do logo
+                                Image(
+                                    painter = painterResource(id = R.drawable.perfil_estudio), // substitua pela imagem do logo
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier
+                                        .size(72.dp)
+                                        .clip(CircleShape)
+                                )
 
-                                    contexto.startActivity(telaEntrarContato) },
-                                modifier = Modifier.weight(1f),
-                                shape = RoundedCornerShape(8.dp),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color(0xFFA855F7)
-                                )
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Filled.Whatsapp, // Substitua isso pelo ícone correto
-                                    contentDescription = "WhatsApp",
-                                    tint = Color.White,
-                                    modifier = Modifier.size(20.dp)
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(
-                                    text = "Conversar",
-                                    color = Color.White
-                                )
+                                Spacer(modifier = Modifier.width(16.dp))
+
+                                // Informações da loja
+                                Column {
+                                    Text(
+                                        modifier = Modifier.padding(start = 6.dp),
+                                        text = stringResource(id = R.string.estudio_ambiente_trabalho),
+                                        fontSize = 18.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color.Black
+                                    )
+                                }
                             }
-                            Button(
-                                onClick = { val telaFeedArtista = Intent(contexto, FeedArtista::class.java)
 
-                                    contexto.startActivity(telaFeedArtista) },
-                                modifier = Modifier.weight(1f),
-                                shape = RoundedCornerShape(8.dp),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color(0xFFA855F7)
-                                )
+                            // Descrição
+                            Spacer(modifier = Modifier.height(20.dp))
+                            Text(
+                                text = stringResource(id = R.string.descricao_ambiente_trabalho),
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.Black
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = stringResource(id = R.string.descricao_texto_ambiente_trabalho),
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.Gray
+                            )
+
+                            // Linha preta para separar os blocos
+                            Spacer(modifier = Modifier.height(50.dp))
+                            Box(
+                                modifier = Modifier
+                                    .width(320.dp)
+                                    .height(1.dp)
+                                    .background(Color.Gray)
+                            )
+
+                            // Redes sociais
+                            Spacer(modifier = Modifier.height(50.dp))
+                            Text(
+                                text = stringResource(id = R.string.redes_ambiente_trabalho),
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.Black
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Icon(
-                                    imageVector = Icons.Filled.Photo, // Substitua isso pelo ícone correto
-                                    contentDescription = "Fotos",
-                                    tint = Color.White,
-                                    modifier = Modifier.size(20.dp)
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    text = "Ver Portfólio",
-                                    color = Color.White
+                                    text = stringResource(id = R.string.instagram_ambiente_trabalho),
+                                    fontSize = 14.sp,
+                                    color = Color.Gray
                                 )
+
+                                Spacer(modifier = Modifier.width(8.dp))
+
+                                // Icone do Instagram
+                                IconButton(onClick = { /* ação para abrir Instagram */ }) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.instagram), // substitua pelo ícone do Instagram
+                                        contentDescription = "Instagram",
+                                        tint = Color.Unspecified,
+                                        modifier = Modifier.size(30.dp)
+                                    )
+                                }
+                            }
+                            // Botões de contato
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(start = 10.dp, end = 10.dp, top = 30.dp),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Button(
+                                    onClick = { },
+                                    modifier = Modifier.weight(1f),
+                                    shape = RoundedCornerShape(8.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = Color(0xFFA855F7)
+                                    )
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Filled.Whatsapp,
+                                        contentDescription = "WhatsApp",
+                                        tint = Color.White,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = "Conversar por WhatsApp",
+                                        color = Color.White
+                                    )
+                                }
                             }
                         }
                     }
@@ -276,12 +439,5 @@ fun TelaPerfilArtista(name: String, modifier: Modifier = Modifier) {
             }
         }
     }
-//}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun GreetingPreview3() {
-    NorthInkMobileAndroidTheme {
-        TelaPerfilArtista(name = stringResource(id = R.string.card_nome))
-    }
 }
+
