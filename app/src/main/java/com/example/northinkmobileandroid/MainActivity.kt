@@ -1,5 +1,6 @@
 package com.example.northinkmobileandroid
 
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -61,11 +62,13 @@ fun BarraInferiorNavegacao(
     modifier: Modifier = Modifier
 ) {
     val selectedIcon = remember { mutableStateOf("home") }
-    val iconColor = Color(0xFF581C87) // Cor dos ícones
-    val cardColor = Color(0xFFFAF5FF) // Cor de fundo dos cartões
+    val iconColor = Color(0xFF581C87)
+    val cardColor = Color(0xFFFAF5FF)
     val purpleBarColor = Color(0xFF9333EA)
 
-    Box(modifier = modifier.fillMaxSize().background(Color.Transparent)) {
+    Box(modifier = modifier
+        .fillMaxSize()
+        .background(Color.Transparent)) {
         NavHost(
             navController = navController,
             startDestination = "home",
@@ -75,11 +78,21 @@ fun BarraInferiorNavegacao(
                 Home(navController = navController)
             }
             composable("listagem") {
-                ListagemTatuador()
+                ListagemTatuador(navController)
             }
-            composable("perfil") {
-                PerfilArtista()
+            composable("login") {
+                Login(navController = navController)
             }
+            composable("cadastro") {
+                Cadastro(navController = navController)
+            }
+            composable("cadastro2") {
+                Cadastro2()
+            }
+            composable("perfilTatuador") {
+                PerfilTatuador(navController = navController)
+            }
+
         }
         Card(
             modifier = Modifier
@@ -127,7 +140,7 @@ fun BarraInferiorNavegacao(
                 ) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center // Centraliza o conteúdo
+                        contentAlignment = Alignment.Center
                     ) {
                         IconButton(onClick = { navController.navigate("listagem") }) {
                             Icon(
@@ -151,10 +164,10 @@ fun BarraInferiorNavegacao(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        IconButton(onClick = { navController.navigate("perfil") }) {
+                        IconButton(onClick = { navController.navigate("login") }) {
                             Icon(
                                 imageVector = Icons.Filled.Person,
-                                contentDescription = "Perfil",
+                                contentDescription = "Login",
                                 tint = iconColor,
                                 modifier = Modifier.size(30.dp)
                             )
@@ -166,7 +179,9 @@ fun BarraInferiorNavegacao(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, showSystemUi = true,
+    device = "spec:id=reference_phone,shape=Normal,width=411,height=891,unit=dp,dpi=420"
+)
 @Composable
 fun GreetingPreview() {
     NorthInkMobileAndroidTheme {

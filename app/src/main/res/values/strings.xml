@@ -9,6 +9,7 @@
     <string name="landing_description">DESCUBRA TATUADORES INCRIVEIS E TRANSFORME SUAS IDEIA EM ARTE.</string>
 
     <string name="landing_button_text">BUSCAR PROFISSIONAIS</string>
+    <string name="landing_button_tatto">SOU UM TATUADOR</string>
 
     <string name="second_section_phrase_part_1">Nós celebramos a</string>
     <string name="second_section_phrase_part_2"> arte </string>
@@ -90,5 +91,7 @@
     <string name="instagram_ambiente_trabalho">Me acompanhe no Instagram!</string>
     <string name="endereco_ambiente_trabalho">Endereço do Estudio</string>
     <string name="endereco_completo">Rua das Flores, 301 - Vila Carrão</string>
-
+    <string name="title_activity_perfil_tatuador">PerfilTatuador</string>
+    <string name="boas_vindas_login">SEJA BEM-VINDO!</string>
+    <string name="boas_vindas_cadastro">SE TORNE UM TATUADOR .</string>
 </resources>

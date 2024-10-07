@@ -1,6 +1,5 @@
 package com.example.northinkmobileandroid
 
-import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material3.Text
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.OutlinedTextField
@@ -30,7 +28,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.northinkmobileandroid.ui.theme.NorthInkMobileAndroidTheme
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
@@ -45,14 +42,30 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Whatsapp
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.navigation.NavHostController
+import android.widget.Toast
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.material3.Text // Importação correta para Text da Material3
+import androidx.compose.ui.text.TextStyle // Importação para definir estilos de texto, se necessário
+import coil.compose.rememberImagePainter
 
 @Composable
-fun ListagemTatuador(modifier: Modifier = Modifier) {
+fun ListagemTatuador(navController: NavHostController, modifier: Modifier = Modifier) {
     val scrollState = rememberScrollState()
+    val tatuadores = remember { mutableStateOf<List<Tatuador>>(emptyList()) }
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        try {
+            tatuadores.value = RetrofitInstance.tatuadorApi.getTatuadores()
+        } catch (e: Exception) {
+            Toast.makeText(context, "Erro ao carregar tatuadores: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -149,10 +162,23 @@ fun ListagemTatuador(modifier: Modifier = Modifier) {
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(top = 30.dp, bottom = 60.dp, start = 15.dp)
         )
-
-        repeat(5) { // Exemplo: repete os cards 5 vezes
-            SessaoCardsTatuadores()
+        // Exibir a lista de tatuadores
+        if (tatuadores.value.isNotEmpty()) {
+            tatuadores.value.forEach { tatuador ->
+                SessaoCardsTatuadores(tatuador, navController)
+            }
+        } else {
+            Text(
+                text = "Nenhum tatuador encontrado.",
+                color = Color.Black,
+                fontSize = 18.sp,
+                modifier = Modifier.padding(16.dp)
+            )
         }
+
+//        repeat(5) { // Exemplo: repete os cards 5 vezes
+//            SessaoCardsTatuadores(navController)
+//        }
     }
 //}
 }
@@ -160,7 +186,7 @@ fun ListagemTatuador(modifier: Modifier = Modifier) {
 data class BottomNavItem(val label: String, val icon: ImageVector)
 
 @Composable
-fun SessaoCardsTatuadores() {
+fun SessaoCardsTatuadores(tatuador: Tatuador, navController: NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -173,26 +199,30 @@ fun SessaoCardsTatuadores() {
 
         // Exemplo de Card de Profissional
         CardProfissional(
-            nome = stringResource(id = R.string.card_nome),
-            endereco = stringResource(id = R.string.card_endereco),
-            precoMinimo = stringResource(id = R.string.card_taxa),
-            estilos = listOf("Blackwork", "Aquarela", "Realismo", "Oriental"),
+            navController = navController,
+            nome = tatuador.nome,
+            endereco = "Rua das Flores, 123",
+            precoMinimo = tatuador.precoMinimo,
+            estilos = tatuador.estilos,
             fotoTatuador = R.drawable.grid_home3,
-            fotosTatuagens = listOf(R.drawable.tatuagem_card1, R.drawable.tatuagem_card2, R.drawable.tatuagem_card3)
+            fotosTatuagens = tatuador.tatuagens,
+
         )
     }
 }
 
 @Composable
 fun CardProfissional(
+    navController: NavHostController,
     nome: String,
-    endereco: String,
-    precoMinimo: String,
-    estilos: List<String>,
+    endereco: String?,
+    precoMinimo: Double?,
+    estilos: List<Estilo>,
     fotoTatuador: Int,
-    fotosTatuagens: List<Int>
+    fotosTatuagens: List<Tatuagem>?,
+
 ) {
-    val contexto = LocalContext.current
+    val context = LocalContext.current
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -211,9 +241,16 @@ fun CardProfissional(
                     .horizontalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                fotosTatuagens.forEach { foto ->
+                fotosTatuagens?.forEach { tatuagem ->
+                    val imageUrl = tatuagem.imagemUrl
+                    val painter = if (imageUrl != null) {
+                        rememberImagePainter(data = imageUrl) // Usando Coil para carregar a imagem da API
+                    } else {
+                        painterResource(id = R.drawable.tatuagem_card3) // Imagem "mocada"
+                    }
+
                     Image(
-                        painter = painterResource(id = foto),
+                        painter = painter,
                         contentDescription = "Foto da tatuagem",
                         modifier = Modifier
                             .size(300.dp)
@@ -222,6 +259,7 @@ fun CardProfissional(
                     )
                 }
             }
+
             Spacer(modifier = Modifier.height(30.dp))
             // Informações do Tatuador
             Row(
@@ -259,7 +297,7 @@ fun CardProfissional(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = endereco,
+                            text = "$endereco",
                             fontSize = 14.sp,
                             color = Color.Black
                         )
@@ -302,12 +340,11 @@ fun CardProfissional(
                                     .widthIn(min = 90.dp)
                             ){
                                 Text(
-                                    text = estilo,
+                                    text = estilo.nome,
                                     fontSize = 14.sp,
                                     color = Color.White,
                                     modifier = Modifier
                                         .align(Alignment.Center)
-//
                                 )
                             }
                     }
@@ -321,7 +358,8 @@ fun CardProfissional(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Button(
-                    onClick = { /* Ação para Conversar com Tatuador */ },
+                    onClick = {
+                       },
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(
@@ -341,7 +379,9 @@ fun CardProfissional(
                     )
                 }
                 Button(
-                    onClick = {},
+                    onClick = {
+                        navController.navigate("perfilTatuador")
+                    },
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(
@@ -349,7 +389,7 @@ fun CardProfissional(
                     )
                 ) {
                     Icon(
-                        imageVector = Icons.Filled.Person, // Substitua isso pelo ícone correto
+                        imageVector = Icons.Filled.Person,
                         contentDescription = "Perfil",
                         tint = Color.White,
                         modifier = Modifier.size(20.dp)

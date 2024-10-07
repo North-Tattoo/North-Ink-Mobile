@@ -114,15 +114,37 @@ fun PrimeiraSecao(contexto: Context, navController: NavHostController) {
 
             )
 
-            Button(
-                onClick = { navController.navigate("listagem") },
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9333EA)),
-                shape = RoundedCornerShape(16.dp),
-                modifier = Modifier
-                    .height(70.dp)
-                    .width(230.dp)
+            Column(
+                verticalArrangement = Arrangement.spacedBy(20.dp), // Espaçamento entre os botões
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally // Alinha os botões centralizados horizontalmente
             ) {
-                Text(text = stringResource(id = R.string.landing_button_text), color = Color.White)
+                Button(
+                    onClick = { navController.navigate("listagem") },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9333EA)),
+                    shape = RoundedCornerShape(30.dp),
+                    modifier = Modifier
+                        .height(60.dp)
+                        .width(300.dp)
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.landing_button_text),
+                        color = Color.White
+                    )
+                }
+                Button(
+                    onClick = { navController.navigate("login") },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF5B5B5B)),
+                    shape = RoundedCornerShape(30.dp),
+                    modifier = Modifier
+                        .height(60.dp)
+                        .width(300.dp)
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.landing_button_tatto),
+                        color = Color.White
+                    )
+                }
             }
         }
     }
