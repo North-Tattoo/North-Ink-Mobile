@@ -1,15 +1,5 @@
 package com.example.northinkmobileandroid
 
-data class Estilo(
-    val nome: String,
-    val descricao: String?
-)
-
-data class Tatuagem(
-    val id: Int?,
-    val imagemUrl: String?
-)
-
 data class Tatuador(
     val id: Int?,
     val nome: String,
@@ -23,4 +13,5 @@ data class Tatuador(
     val instagram: String?,
     val estilos: List<Estilo>,
     val tatuagens: List<Tatuagem>
-)
+){
+}

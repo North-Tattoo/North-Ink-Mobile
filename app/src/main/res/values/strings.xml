@@ -91,7 +91,6 @@
     <string name="instagram_ambiente_trabalho">Me acompanhe no Instagram!</string>
     <string name="endereco_ambiente_trabalho">Endereço do Estudio</string>
     <string name="endereco_completo">Rua das Flores, 301 - Vila Carrão</string>
-    <string name="title_activity_perfil_tatuador">PerfilTatuador</string>
-    <string name="boas_vindas_login">SEJA BEM-VINDO!</string>
-    <string name="boas_vindas_cadastro">SE TORNE UM TATUADOR .</string>
+    <string name="boas_vindas_login">Seja Bem-Vindo!</string>
+    <string name="boas_vindas_cadastro">Se Torne um Tatuador.</string>
 </resources>

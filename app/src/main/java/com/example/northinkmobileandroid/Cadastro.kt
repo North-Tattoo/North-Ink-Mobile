@@ -8,13 +8,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.background
 import androidx.compose.foundation.text.KeyboardOptions
@@ -36,11 +31,12 @@ fun Cadastro(navController: NavHostController) {
     var sobrenome by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var cpf by remember { mutableStateOf(TextFieldValue("")) }
-    var celular by remember { mutableStateOf(TextFieldValue("")) }
-    var password by remember { mutableStateOf("") }
-    var passwordVisible by remember { mutableStateOf(false) }
-    var confirmPassword by remember { mutableStateOf("") }
-    var isFormValid by remember { mutableStateOf(false) }
+
+    var nomeError by remember { mutableStateOf(false) }
+    var sobrenomeError by remember { mutableStateOf(false) }
+    var emailError by remember { mutableStateOf(false) }
+    var cpfError by remember { mutableStateOf(false) }
+
     var errorMessage by remember { mutableStateOf("") }
 
     // Função para aplicar máscara ao CPF
@@ -48,24 +44,12 @@ fun Cadastro(navController: NavHostController) {
         val digitsOnly = value.replace(Regex("[^\\d]"), "")
         return when (digitsOnly.length) {
             in 0..3 -> digitsOnly
-            in 4..5 -> "${digitsOnly.take(3)}.${digitsOnly.drop(3)}"
-            in 6..8 -> "${digitsOnly.take(3)}.${digitsOnly.substring(3, 6)}.${digitsOnly.drop(6)}"
-            in 9..10 -> "${digitsOnly.take(3)}.${digitsOnly.substring(3, 6)}.${digitsOnly.substring(6, 9)}-${digitsOnly.drop(9)}"
-            11 -> "${digitsOnly.take(3)}.${digitsOnly.substring(3, 6)}.${digitsOnly.substring(6, 9)}-${digitsOnly.drop(9)}"
+            in 4..6 -> "${digitsOnly.take(3)}.${digitsOnly.drop(3)}"
+            in 7..9 -> "${digitsOnly.take(3)}.${digitsOnly.substring(3, 6)}.${digitsOnly.drop(6)}"
+            in 10..11 -> "${digitsOnly.take(3)}.${digitsOnly.substring(3, 6)}.${digitsOnly.substring(6, 9)}-${digitsOnly.drop(9)}"
             else -> digitsOnly.take(11)
         }
     }
-
-    fun celularMask(value: String): String {
-        val digits = value.replace(Regex("[^\\d]"), "") // Remove todos os caracteres não numéricos
-
-        return when {
-            digits.length <= 2 -> "($digits" // Exibe DDD
-            digits.length <= 7 -> "(${digits.substring(0, 2)}) ${digits.substring(2)}" // Exibe DDD e 1º bloco do número
-            else -> "(${digits.substring(0, 2)}) ${digits.substring(2, 7)}-${digits.substring(7, minOf(digits.length, 11))}" // Exibe DDD, 1º bloco e 2º bloco do número
-        }
-    }
-
 
 
     Box(
@@ -85,7 +69,7 @@ fun Cadastro(navController: NavHostController) {
                         bottomEnd = 30.dp
                     )
                 ),
-            contentAlignment = Alignment.TopCenter
+            contentAlignment = Alignment.Center
         ) {
             Image(
                 painter = painterResource(id = R.drawable.logobranca),
@@ -93,12 +77,13 @@ fun Cadastro(navController: NavHostController) {
                 modifier = Modifier
                     .size(150.dp)
                     .align(Alignment.TopCenter)
-                    .padding(bottom = 6.dp)
+                    .padding(top = 16.dp)
+
             )
             Text(
                 text = stringResource(id = R.string.boas_vindas_cadastro),
                 fontWeight = FontWeight.Bold,
-                fontSize = 20.sp,
+                fontSize = 25.sp,
                 color = Color.White,
                 modifier = Modifier
                     .padding(30.dp)
@@ -124,184 +109,113 @@ fun Cadastro(navController: NavHostController) {
                     value = nome,
                     onValueChange = { nome = it },
                     label = { Text("Nome", color = Color.Black) },
+                    isError = nomeError,
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                     colors = TextFieldDefaults.outlinedTextFieldColors(
                         focusedBorderColor = Color(0xFFA855F7),
                         unfocusedBorderColor = Color(0xFFA855F7),
                         focusedLabelColor = Color(0xFFA855F7),
-                        unfocusedLabelColor = Color.Gray,
-                        containerColor = Color.White,
                         focusedTextColor = Color.Black,
-                        unfocusedTextColor = Color.Black
+                        unfocusedTextColor = Color.Black,
+                        unfocusedLabelColor = Color.Gray,
+                        errorTextColor = Color.Black,
+                        containerColor = Color.White,
+
                     ),
                     shape = RoundedCornerShape(20.dp)
                 )
+                if (nomeError) {
+                    Text("Nome deve ter pelo menos 3 caracteres.", color = Color.Red, fontSize = 12.sp)
+                }
 
                 // Input de Sobrenome
                 OutlinedTextField(
                     value = sobrenome,
                     onValueChange = { sobrenome = it },
                     label = { Text("Sobrenome", color = Color.Black) },
+                    isError = sobrenomeError,
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                     colors = TextFieldDefaults.outlinedTextFieldColors(
                         focusedBorderColor = Color(0xFFA855F7),
                         unfocusedBorderColor = Color(0xFFA855F7),
-                        focusedLabelColor = Color(0xFFA855F7),
-                        unfocusedLabelColor = Color.Gray,
                         containerColor = Color.White,
                         focusedTextColor = Color.Black,
+                        errorTextColor = Color.Black,
                         unfocusedTextColor = Color.Black
                     ),
                     shape = RoundedCornerShape(20.dp)
                 )
+                if (sobrenomeError) {
+                Text("Sobrenome deve ter pelo menos 3 caracteres.", color = Color.Red, fontSize = 12.sp)
+            }
 
                 // Input de Email
                 OutlinedTextField(
                     value = email,
                     onValueChange = { email = it },
                     label = { Text("Email", color = Color.Black) },
+                    isError = emailError,
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                     colors = TextFieldDefaults.outlinedTextFieldColors(
                         focusedBorderColor = Color(0xFFA855F7),
                         unfocusedBorderColor = Color(0xFFA855F7),
-                        focusedLabelColor = Color(0xFFA855F7),
-                        unfocusedLabelColor = Color.Gray,
                         containerColor = Color.White,
                         focusedTextColor = Color.Black,
+                        errorTextColor = Color.Black,
                         unfocusedTextColor = Color.Black
                     ),
                     shape = RoundedCornerShape(20.dp)
                 )
+                if (emailError) {
+                    Text("Por favor, insira um email válido.", color = Color.Red, fontSize = 12.sp)
+                }
 
                 // Input de CPF
                 OutlinedTextField(
                     value = cpf,
-                    onValueChange = {
-                        // Obtenha a posição do cursor antes de aplicar a máscara
-                        val cursorPosition = it.selection.start
+                    onValueChange = { newValue ->
 
-                        // Aplica a máscara ao valor de CPF
-                        val masked = cpfMask(it.text)
+                        val digitsOnly = newValue.text.replace(Regex("[^\\d]"), "")
 
-                        // Define o novo valor do estado, garantindo que a posição do cursor seja atualizada corretamente
-                        cpf = TextFieldValue(masked, TextRange(cursorPosition + (masked.length - it.text.length)))
+                        val masked = cpfMask(digitsOnly)
+
+                        val cursorPosition = newValue.selection.start + (masked.length - newValue.text.length)
+
+                        cpf = TextFieldValue(masked, TextRange(cursorPosition.coerceIn(0, masked.length)))
                     },
                     label = { Text("CPF", color = Color.Black) },
+                    isError = cpfError,
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     colors = TextFieldDefaults.outlinedTextFieldColors(
-                        focusedBorderColor = Color(0xFFA855F7),
-                        unfocusedBorderColor = Color(0xFFA855F7),
-                        focusedLabelColor = Color(0xFFA855F7),
-                        unfocusedLabelColor = Color.Gray,
+                        focusedBorderColor = if (cpfError) Color.Red else Color(0xFFA855F7),
+                        unfocusedBorderColor = if (cpfError) Color.Red else Color(0xFFA855F7),
                         containerColor = Color.White,
                         focusedTextColor = Color.Black,
+                        errorTextColor = Color.Black,
                         unfocusedTextColor = Color.Black
                     ),
                     shape = RoundedCornerShape(20.dp)
                 )
-
-                OutlinedTextField(
-                    value = celular,
-                    onValueChange = { newValue ->
-                        // Remove todos os caracteres não numéricos
-                        val digits = newValue.text.replace(Regex("[^\\d]"), "")
-
-                        // Limita a 11 dígitos
-                        if (digits.length <= 11) {
-                            val masked = celularMask(digits)
-                            // Define o novo valor com a máscara e ajusta o cursor
-                            val cursorPosition = newValue.selection.start
-                            celular= TextFieldValue(masked, TextRange(cursorPosition + (masked.length - newValue.text.length)))
-                        }
-                    },
-                    label = { Text("Celular", color = Color.Black) },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        focusedBorderColor = Color(0xFFA855F7),
-                        unfocusedBorderColor = Color(0xFFA855F7),
-                        focusedLabelColor = Color(0xFFA855F7),
-                        unfocusedLabelColor = Color.Gray,
-                        containerColor = Color.White,
-                        focusedTextColor = Color.Black,
-                        unfocusedTextColor = Color.Black
-                    ),
-                    shape = RoundedCornerShape(20.dp)
-                )
-
-                // Input de Senha
-                OutlinedTextField(
-                    value = password,
-                    onValueChange = { password = it },
-                    label = { Text("Senha", color = Color.Black) },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        focusedBorderColor = Color(0xFFA855F7),
-                        unfocusedBorderColor = Color(0xFFA855F7),
-                        focusedLabelColor = Color(0xFFA855F7),
-                        unfocusedLabelColor = Color.Gray,
-                        containerColor = Color.White,
-                        focusedTextColor = Color.Black,
-                        unfocusedTextColor = Color.Black
-                    ),
-                    visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                    trailingIcon = {
-                        val image = if (passwordVisible)
-                            Icons.Default.Visibility
-                        else Icons.Default.VisibilityOff
-
-                        IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                            Icon(imageVector = image, contentDescription = null)
-                        }
-                    },
-                    shape = RoundedCornerShape(20.dp)
-                )
-
-                // Input de Confirmação de Senha
-                OutlinedTextField(
-                    value = confirmPassword,
-                    onValueChange = { confirmPassword = it },
-                    label = { Text("Confirmação de Senha", color = Color.Black) },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        focusedBorderColor = Color(0xFFA855F7),
-                        unfocusedBorderColor = Color(0xFFA855F7),
-                        focusedLabelColor = Color(0xFFA855F7),
-                        unfocusedLabelColor = Color.Gray,
-                        containerColor = Color.White,
-                        focusedTextColor = Color.Black,
-                        unfocusedTextColor = Color.Black
-                    ),
-                    visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                    trailingIcon = {
-                        val image = if (passwordVisible)
-                            Icons.Default.Visibility
-                        else Icons.Default.VisibilityOff
-
-                        IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                            Icon(imageVector = image, contentDescription = null)
-                        }
-                    },
-                    shape = RoundedCornerShape(20.dp)
-                )
-
+                if (cpfError) {
+                    Text("CPF inválido.", color = Color.Red, fontSize = 12.sp)
+                }
                 // Botão de Próximo
                 Button(
                     onClick = {
-                        // Validação do formulário
-                        isFormValid = validateForm(nome, sobrenome, email, cpf.text, celular.text, password, confirmPassword)
-                        if (isFormValid) {
+                        nomeError = nome.length < 3
+                        sobrenomeError = sobrenome.length < 3
+                        emailError = email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
+                        cpfError = cpf.text.isEmpty() || !isValidCPF(cpf.text)
+
+                        if (!nomeError && !sobrenomeError && !emailError && !cpfError) {
                             navController.navigate("cadastro2")
                         } else {
-                            errorMessage = "Por favor, preencha todos os campos corretamente."
+                            errorMessage = "Por favor, corrija os erros acima."
                         }
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9333EA)),
@@ -321,32 +235,13 @@ fun Cadastro(navController: NavHostController) {
                 if (errorMessage.isNotEmpty()) {
                     Text(
                         text = errorMessage,
-                        color = Color.Red,
-                        modifier = Modifier.padding(top = 8.dp)
+                        fontSize = 12.sp,
+                        color = Color.Red
                     )
                 }
             }
         }
     }
-}
-
-// Função para validar o formulário
-fun validateForm(
-    nome: String,
-    sobrenome: String,
-    email: String,
-    cpf: String,
-    celular: String,
-    password: String,
-    confirmPassword: String
-): Boolean {
-    return nome.isNotEmpty() &&
-            sobrenome.isNotEmpty() &&
-            email.isNotEmpty() && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() &&
-            cpf.isNotEmpty() && isValidCPF(cpf) &&
-            celular.isNotEmpty() && isValidPhone(celular) &&
-            password.isNotEmpty() && password.length >= 6 && // Exemplo: mínimo de 6 caracteres
-            password == confirmPassword
 }
 
 fun isValidCPF(cpf: String): Boolean {
@@ -356,9 +251,4 @@ fun isValidCPF(cpf: String): Boolean {
 }
 
 
-fun isValidPhone(phone: String): Boolean {
-    // Remover caracteres não numéricos
-    val digitsOnly = phone.replace(Regex("[^\\d]"), "")
-    return digitsOnly.length in 10..11
-}
 

@@ -87,7 +87,10 @@ fun BarraInferiorNavegacao(
                 Cadastro(navController = navController)
             }
             composable("cadastro2") {
-                Cadastro2()
+                Cadastro2(navController = navController)
+            }
+            composable("cadastro3") {
+                Cadastro3(navController = navController)
             }
             composable("perfilTatuador") {
                 PerfilTatuador(navController = navController)
