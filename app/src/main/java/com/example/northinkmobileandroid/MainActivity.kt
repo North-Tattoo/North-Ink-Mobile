@@ -1,13 +1,11 @@
 package com.example.northinkmobileandroid
 
-import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -33,10 +31,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.northinkmobileandroid.viewmodel.TatuadorViewModel
+import com.example.northinkmobileandroid.ui.Cadastro
+import com.example.northinkmobileandroid.ui.Cadastro2
+import com.example.northinkmobileandroid.ui.Cadastro3
+import com.example.northinkmobileandroid.ui.Home
+import com.example.northinkmobileandroid.ui.ListagemTatuador
+import com.example.northinkmobileandroid.ui.Login
+import com.example.northinkmobileandroid.ui.PerfilTatuador
 import com.example.northinkmobileandroid.ui.theme.NorthInkMobileAndroidTheme
 
 class MainActivity : ComponentActivity() {
@@ -66,6 +73,8 @@ fun BarraInferiorNavegacao(
     val cardColor = Color(0xFFFAF5FF)
     val purpleBarColor = Color(0xFF9333EA)
 
+    val tatuadorViewModel: TatuadorViewModel = viewModel()
+
     Box(modifier = modifier
         .fillMaxSize()
         .background(Color.Transparent)) {
@@ -83,14 +92,14 @@ fun BarraInferiorNavegacao(
             composable("login") {
                 Login(navController = navController)
             }
-            composable("cadastro") {
-                Cadastro(navController = navController)
+            composable("cadastro") {    
+                Cadastro(navController = navController, tatuadorViewModel)
             }
             composable("cadastro2") {
-                Cadastro2(navController = navController)
+                Cadastro2(navController = navController, tatuadorViewModel)
             }
             composable("cadastro3") {
-                Cadastro3(navController = navController)
+                Cadastro3(navController = navController, tatuadorViewModel)
             }
             composable("perfilTatuador") {
                 PerfilTatuador(navController = navController)
@@ -182,8 +191,8 @@ fun BarraInferiorNavegacao(
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true,
-    device = "spec:id=reference_phone,shape=Normal,width=411,height=891,unit=dp,dpi=420"
+@Preview(
+    device = "spec:width=411dp,height=891dp", showSystemUi = true, showBackground = true
 )
 @Composable
 fun GreetingPreview() {

@@ -1,4 +1,4 @@
-package com.example.northinkmobileandroid
+package com.example.northinkmobileandroid.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -49,13 +49,17 @@ import android.widget.Toast
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.material3.Text // Importação correta para Text da Material3
-import androidx.compose.ui.text.TextStyle // Importação para definir estilos de texto, se necessário
 import coil.compose.rememberImagePainter
+import com.example.northinkmobileandroid.data.model.Estilo
+import com.example.northinkmobileandroid.R
+import com.example.northinkmobileandroid.api.RetrofitInstance
+import com.example.northinkmobileandroid.data.model.TatuadorListagem
+import com.example.northinkmobileandroid.data.model.Tatuagem
 
 @Composable
 fun ListagemTatuador(navController: NavHostController, modifier: Modifier = Modifier) {
     val scrollState = rememberScrollState()
-    val tatuadores = remember { mutableStateOf<List<Tatuador>>(emptyList()) }
+    val tatuadores = remember { mutableStateOf<List<TatuadorListagem>>(emptyList()) }
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
@@ -147,9 +151,11 @@ fun ListagemTatuador(navController: NavHostController, modifier: Modifier = Modi
                     .padding(start = 16.dp, top = 120.dp)
             )
             SimpleImageCarousel(
-                images = listOf(R.mipmap.aquarela, R.mipmap.blackwork, R.mipmap.neo_traditional, R.mipmap.geometrico2,
+                images = listOf(
+                    R.mipmap.aquarela, R.mipmap.blackwork, R.mipmap.neo_traditional, R.mipmap.geometrico2,
                     R.mipmap.minimalista, R.mipmap.lettering, R.mipmap.new_school, R.mipmap.old_school, R.mipmap.oriental2,
-                    R.mipmap.trash_polka, R.mipmap.pontilhismo3, R.mipmap.realismo), // IDs das imagens
+                    R.mipmap.trash_polka, R.mipmap.pontilhismo3, R.mipmap.realismo
+                ), // IDs das imagens
                 imageDescriptions = listOf("Aquarela", "Blackwork", "Neo Traditional", "Geometrico",
                     "Minimalista", "Lettering","New School", "Old School", "Oriental", "Trash Polka",
                     "Pontilhismo", "Realismo") // Descrições das imagens
@@ -186,7 +192,8 @@ fun ListagemTatuador(navController: NavHostController, modifier: Modifier = Modi
 data class BottomNavItem(val label: String, val icon: ImageVector)
 
 @Composable
-fun SessaoCardsTatuadores(tatuador: Tatuador, navController: NavHostController) {
+fun SessaoCardsTatuadores(tatuador: TatuadorListagem, navController: NavHostController) {
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -196,16 +203,21 @@ fun SessaoCardsTatuadores(tatuador: Tatuador, navController: NavHostController) 
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
+        val tatuagensMocadas = listOf(
+            Tatuagem(imagemUrl = R.drawable.grid_home3), // Ou passe uma URL mock se necessário
+            Tatuagem(imagemUrl = R.drawable.grid_home3), // Mais tatuagens mocadas
+            Tatuagem(imagemUrl = R.drawable.grid_home3)
+        )
 
         // Exemplo de Card de Profissional
         CardProfissional(
             navController = navController,
             nome = tatuador.nome,
             endereco = "Rua das Flores, 123",
-            precoMinimo = tatuador.precoMinimo,
+            precoMinimo = 500.00,
             estilos = tatuador.estilos,
             fotoTatuador = R.drawable.grid_home3,
-            fotosTatuagens = tatuador.tatuagens,
+            fotosTatuagens = tatuagensMocadas,
 
         )
     }
@@ -221,7 +233,7 @@ fun CardProfissional(
     fotoTatuador: Int,
     fotosTatuagens: List<Tatuagem>?,
 
-) {
+    ) {
     val context = LocalContext.current
     Card(
         modifier = Modifier
@@ -250,7 +262,7 @@ fun CardProfissional(
                     }
 
                     Image(
-                        painter = painter,
+                        painter = painterResource(id = R.drawable.tatuagem_card3),
                         contentDescription = "Foto da tatuagem",
                         modifier = Modifier
                             .size(300.dp)

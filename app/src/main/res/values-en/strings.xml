@@ -95,4 +95,5 @@
     <string name="endereco_completo">301 Flower Street - Vila Carrão</string>
     <string name="boas_vindas_login">Welcome</string>
     <string name="boas_vindas_cadastro">BECOME A TATTOO ARTIST .</string>
+    <string name="boas_vindas_cadastro_2">Complete your registration</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.example.northinkmobileandroid
+package com.example.northinkmobileandroid.ui
 
 import android.content.Context
 import androidx.compose.foundation.Image
@@ -36,6 +36,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.northinkmobileandroid.R
 
 @Composable
 fun Home(modifier: Modifier = Modifier, navController: NavHostController) {

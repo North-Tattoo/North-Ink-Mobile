@@ -1,4 +1,4 @@
-package com.example.northinkmobileandroid
+package com.example.northinkmobileandroid.ui
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
@@ -47,12 +47,18 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.example.northinkmobileandroid.R
+import com.example.northinkmobileandroid.viewmodel.TatuadorViewModel
 
 @SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Cadastro2(navController: NavHostController) {
+fun Cadastro2(
+    navController: NavHostController,
+    tatuadorViewModel: TatuadorViewModel = viewModel()
+) {
 
     var celular by remember { mutableStateOf(TextFieldValue("")) }
     var password by remember { mutableStateOf("") }
@@ -99,17 +105,18 @@ fun Cadastro2(navController: NavHostController) {
                 contentDescription = null,
                 modifier = Modifier
                     .size(150.dp)
+                    .padding(bottom = 35.dp)
                     .align(Alignment.TopCenter)
-                    .padding(top = 16.dp)
+
 
             )
             Text(
-                text = stringResource(id = R.string.boas_vindas_cadastro),
+                text = stringResource(id = R.string.boas_vindas_cadastro_2),
                 fontWeight = FontWeight.Medium,
                 fontSize = 25.sp,
                 color = Color.White,
                 modifier = Modifier
-                    .padding(30.dp)
+                    .padding(bottom = 150.dp)
             )
         }
 
@@ -141,7 +148,7 @@ fun Cadastro2(navController: NavHostController) {
                             celular= TextFieldValue(masked, TextRange(cursorPosition + (masked.length - newValue.text.length)))
                         }
                     },
-                    label = { Text("Celular", color = Color.Black) },
+                    label = { Text("Celular ${tatuadorViewModel.nome}", color = Color.Black) },
                     singleLine = true,
                     modifier = Modifier
                         .fillMaxWidth(),
@@ -258,6 +265,7 @@ fun Cadastro2(navController: NavHostController) {
                             confirmPasswordError = confirmPassword != password
 
                             if (!celularError && !passwordError && !confirmPasswordError) {
+                                tatuadorViewModel.setDadosContato(celular.text, password)
                                 navController.navigate("cadastro3") // Navega para a próxima tela
                             } else {
                                 errorMessage = "Por favor, preencha todos os campos corretamente."

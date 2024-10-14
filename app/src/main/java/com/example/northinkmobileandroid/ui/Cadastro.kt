@@ -1,4 +1,4 @@
-package com.example.northinkmobileandroid
+package com.example.northinkmobileandroid.ui
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
@@ -20,12 +20,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.navigation.NavHostController
+import retrofit2.Response
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.northinkmobileandroid.R
+import com.example.northinkmobileandroid.data.model.TatuadorCriacao
+import com.example.northinkmobileandroid.viewmodel.TatuadorViewModel
 
 
 @SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Cadastro(navController: NavHostController) {
+fun Cadastro(
+    navController: NavHostController,
+    tatuadorViewModel: TatuadorViewModel = viewModel()
+) {
 
     var nome by remember { mutableStateOf("") }
     var sobrenome by remember { mutableStateOf("") }
@@ -49,6 +57,14 @@ fun Cadastro(navController: NavHostController) {
             in 10..11 -> "${digitsOnly.take(3)}.${digitsOnly.substring(3, 6)}.${digitsOnly.substring(6, 9)}-${digitsOnly.drop(9)}"
             else -> digitsOnly.take(11)
         }
+    }
+
+    fun onSuccess(response: Response<TatuadorCriacao>) {
+        navController.navigate("cadastro2")  // Ir para a próxima etapa se o cadastro for bem-sucedido
+    }
+
+    fun onError(message: String) {
+        errorMessage = message  // Exibe a mensagem de erro
     }
 
 
@@ -76,17 +92,18 @@ fun Cadastro(navController: NavHostController) {
                 contentDescription = null,
                 modifier = Modifier
                     .size(150.dp)
+                    .padding(bottom = 35.dp)
                     .align(Alignment.TopCenter)
-                    .padding(top = 16.dp)
+
 
             )
             Text(
                 text = stringResource(id = R.string.boas_vindas_cadastro),
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.Medium,
                 fontSize = 25.sp,
                 color = Color.White,
                 modifier = Modifier
-                    .padding(30.dp)
+                    .padding(bottom = 150.dp)
             )
         }
 
@@ -178,7 +195,7 @@ fun Cadastro(navController: NavHostController) {
                     value = cpf,
                     onValueChange = { newValue ->
 
-                        val digitsOnly = newValue.text.replace(Regex("[^\\d]"), "")
+                          val digitsOnly = newValue.text.replace(Regex("[^\\d]"), "")
 
                         val masked = cpfMask(digitsOnly)
 
@@ -213,6 +230,7 @@ fun Cadastro(navController: NavHostController) {
                         cpfError = cpf.text.isEmpty() || !isValidCPF(cpf.text)
 
                         if (!nomeError && !sobrenomeError && !emailError && !cpfError) {
+                            tatuadorViewModel.setDadosPessoais(nome, sobrenome, email, cpf.text)
                             navController.navigate("cadastro2")
                         } else {
                             errorMessage = "Por favor, corrija os erros acima."

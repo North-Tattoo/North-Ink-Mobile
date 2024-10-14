@@ -93,4 +93,5 @@
     <string name="endereco_completo">Rua das Flores, 301 - Vila Carrão</string>
     <string name="boas_vindas_login">Seja Bem-Vindo!</string>
     <string name="boas_vindas_cadastro">Se Torne um Tatuador.</string>
+    <string name="boas_vindas_cadastro_2">Complete seu cadastro</string>
 </resources>

@@ -1,5 +1,6 @@
-package com.example.northinkmobileandroid
+package com.example.northinkmobileandroid.ui
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -17,17 +18,70 @@ import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.example.northinkmobileandroid.R
+import com.example.northinkmobileandroid.viewmodel.TatuadorViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Login(navController: NavHostController) {
+fun Login(
+    navController: NavHostController,
+    tatuadorViewModel: TatuadorViewModel = viewModel()
+) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
+    var loginErrorMessage by remember { mutableStateOf("") }
+
+    // Variáveis para exibir o Snackbar
+    var showSnackbar by remember { mutableStateOf(false) }
+    var snackbarMessage by remember { mutableStateOf("") }
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    fun isValidEmail(email: String): Boolean {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
+    }
+
+     fun validateFields(): Boolean {
+        return when {
+            email.isEmpty() -> {
+                loginErrorMessage = "Por favor, insira o e-mail."
+                false
+            }
+            password.isEmpty() -> {
+                loginErrorMessage = "Por favor, insira a senha."
+                false
+            }
+            else -> {
+                loginErrorMessage = ""
+                true
+            }
+        }
+    }
+
+    fun handleLogin() {
+        if (validateFields()) {
+            tatuadorViewModel.loginEmail = email
+            tatuadorViewModel.loginSenha = password
+
+            tatuadorViewModel.login(
+                onSuccess = { loginResponse ->
+                    snackbarMessage = "Login realizado com sucesso!"
+                    showSnackbar = true
+                    Log.d("Login", "Login bem-sucedido: ${loginResponse.token}")
+                },
+                onError = { error ->
+                    loginErrorMessage = "E-mail ou senha inválidos."
+                }
+            )
+        }
+    }
+
 
     Box(
         modifier = Modifier
@@ -38,15 +92,15 @@ fun Login(navController: NavHostController) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(350.dp) // Altura da parte superior roxa
+                .height(350.dp)
                 .background(
                     color = Color(0xFFA855F7),
                     shape = RoundedCornerShape(
                         bottomStart = 30.dp,
                         bottomEnd = 30.dp
-                    ) // Apenas as bordas inferiores arredondadas
+                    )
                 ),
-            contentAlignment = Alignment.Center // Alinha o conteúdo no centro do Box
+            contentAlignment = Alignment.Center
         ) {
             Image(
                 painter = painterResource(id = R.drawable.logobranca),
@@ -59,8 +113,8 @@ fun Login(navController: NavHostController) {
             )
             Text(
                 text = stringResource(id = R.string.boas_vindas_login),
-                fontWeight = FontWeight.Bold,
-                fontSize = 30.sp,
+                fontWeight = FontWeight.Medium,
+                fontSize = 25.sp,
                 color = Color.White,
                 modifier = Modifier
                     .padding(30.dp)
@@ -92,12 +146,12 @@ fun Login(navController: NavHostController) {
                         .fillMaxWidth()
                         .padding(top = 30.dp, bottom = 16.dp),
                     colors = TextFieldDefaults.outlinedTextFieldColors(
-                        focusedBorderColor = Color(0xFFA855F7),  // Borda roxa quando focado
-                        unfocusedBorderColor = Color(0xFFA855F7),  // Borda roxa quando não focado
-                        focusedLabelColor = Color(0xFFA855F7),  // Label roxa quando focado
-                        unfocusedLabelColor = Color.Gray,  // Label cinza quando não focado
-                        containerColor = Color.White,  // Cor de fundo branco
-                        focusedTextColor = Color.Black,  // Cor do texto digitado
+                        focusedBorderColor = Color(0xFFA855F7),
+                        unfocusedBorderColor = Color(0xFFA855F7),
+                        focusedLabelColor = Color(0xFFA855F7),
+                        unfocusedLabelColor = Color.Gray,
+                        containerColor = Color.White,
+                        focusedTextColor = Color.Black,
                         unfocusedTextColor = Color.Black
                 ),
                     shape = RoundedCornerShape(20.dp)
@@ -113,12 +167,12 @@ fun Login(navController: NavHostController) {
                         .fillMaxWidth()
                         .padding(bottom = 24.dp),
                     colors = TextFieldDefaults.outlinedTextFieldColors(
-                        focusedBorderColor = Color(0xFFA855F7),  // Borda roxa quando focado
-                        unfocusedBorderColor = Color(0xFFA855F7),  // Borda roxa quando não focado
-                        focusedLabelColor = Color(0xFFA855F7),  // Label roxa quando focado
-                        unfocusedLabelColor = Color.Gray,  // Label cinza quando não focado
-                        containerColor = Color.White,  // Cor de fundo branco
-                        focusedTextColor = Color.Black,  // Cor do texto digitado
+                        focusedBorderColor = Color(0xFFA855F7),
+                        unfocusedBorderColor = Color(0xFFA855F7),
+                        focusedLabelColor = Color(0xFFA855F7),
+                        unfocusedLabelColor = Color.Gray,
+                        containerColor = Color.White,
+                        focusedTextColor = Color.Black,
                         unfocusedTextColor = Color.Black
                     ),
                     visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
@@ -133,10 +187,18 @@ fun Login(navController: NavHostController) {
                     },
                     shape = RoundedCornerShape(20.dp)
                 )
+                // Exibir mensagem de erro se houver
+                if (loginErrorMessage.isNotEmpty()) {
+                    Text(
+                        text = loginErrorMessage,
+                        color = Color.Red,
+                        fontSize = 14.sp
+                    )
+                }
 
                 // Botão de login
                 Button(
-                    onClick = { /* Ação de login */ },
+                    onClick = { handleLogin() },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9333EA)),
                     modifier = Modifier
                         .width(200.dp)
@@ -158,7 +220,7 @@ fun Login(navController: NavHostController) {
                 ) {
                     Text(
                         text = "Não tem conta? ",
-                        color = Color(0xFF8F97A1), // Cor especificada
+                        color = Color(0xFF8F97A1),
                         fontSize = 14.sp
                     )
                     Text(
@@ -171,6 +233,52 @@ fun Login(navController: NavHostController) {
                     )
                 }
             }
+        }
+        // Exibir Snackbar se necessário
+        if (showSnackbar) {
+            LaunchedEffect(snackbarMessage) {
+                snackbarHostState.showSnackbar(snackbarMessage)
+                kotlinx.coroutines.delay(500)
+                navController.navigate("home")
+            }
+        }
+
+        if (showSnackbar) {
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(top = 16.dp),
+                snackbar = { snackbarData ->
+                    Snackbar(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .background(Color(0xFF171717), RoundedCornerShape(12.dp)),
+                        containerColor = Color(0xFF171717),
+                        contentColor = Color.White,
+                        shape = RoundedCornerShape(12.dp),
+                        content = {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Info,
+                                    contentDescription = "Info",
+                                    tint = Color(0xFFA855F7),
+                                    modifier = Modifier.size(24.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = snackbarData.visuals.message,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                            }
+                        }
+                    )
+                }
+            )
         }
     }
 }
