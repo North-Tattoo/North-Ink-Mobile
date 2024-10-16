@@ -40,6 +40,11 @@ import com.example.northinkmobileandroid.viewmodel.TatuadorViewModel
 import com.example.northinkmobileandroid.ui.Cadastro
 import com.example.northinkmobileandroid.ui.Cadastro2
 import com.example.northinkmobileandroid.ui.Cadastro3
+import com.example.northinkmobileandroid.ui.GerenciamentoConta
+import com.example.northinkmobileandroid.ui.GerenciamentoContaEdicao
+import com.example.northinkmobileandroid.ui.GerenciamentoContaEstudio
+import com.example.northinkmobileandroid.ui.GerenciamentoContaPerfil
+import com.example.northinkmobileandroid.ui.GerenciamentoContaPortifolio
 import com.example.northinkmobileandroid.ui.Home
 import com.example.northinkmobileandroid.ui.ListagemTatuador
 import com.example.northinkmobileandroid.ui.Login
@@ -103,6 +108,21 @@ fun BarraInferiorNavegacao(
             }
             composable("perfilTatuador") {
                 PerfilTatuador(navController = navController)
+            }
+            composable("gerenciamentoConta") {
+                GerenciamentoConta(navController = navController)
+            }
+            composable("gerenciamentoContaEdicao") {
+                GerenciamentoContaEdicao(navController = navController)
+            }
+            composable("gerenciamentoContaPerfil") {
+                GerenciamentoContaPerfil(navController = navController)
+            }
+            composable("gerenciamentoContaPortifolio") {
+                GerenciamentoContaPortifolio(navController = navController)
+            }
+            composable("gerenciamentoContaEstudio") {
+                GerenciamentoContaEstudio(navController = navController)
             }
 
         }

@@ -239,7 +239,7 @@ fun Login(
             LaunchedEffect(snackbarMessage) {
                 snackbarHostState.showSnackbar(snackbarMessage)
                 kotlinx.coroutines.delay(500)
-                navController.navigate("home")
+                navController.navigate("gerenciamentoConta")
             }
         }
 

@@ -11,7 +11,7 @@ import retrofit2.http.POST
 
 interface TatuadorApi {
 
-    @GET("api/usuarios")
+    @GET("api/usuarios/geral")
     suspend fun getTatuadores(): List<TatuadorListagem>
 
     @POST("api/usuarios")

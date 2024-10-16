@@ -189,8 +189,6 @@ fun ListagemTatuador(navController: NavHostController, modifier: Modifier = Modi
 //}
 }
 
-data class BottomNavItem(val label: String, val icon: ImageVector)
-
 @Composable
 fun SessaoCardsTatuadores(tatuador: TatuadorListagem, navController: NavHostController) {
 
@@ -212,9 +210,11 @@ fun SessaoCardsTatuadores(tatuador: TatuadorListagem, navController: NavHostCont
         // Exemplo de Card de Profissional
         CardProfissional(
             navController = navController,
-            nome = tatuador.nome,
-            endereco = "Rua das Flores, 123",
-            precoMinimo = 500.00,
+            nome = tatuador.nome ?: "Nome indisponível",
+            sobrenome = tatuador.sobrenome ?: "Sobrenome indisponível",
+            rua = tatuador.estudio?.endereco?.rua ?: "Endereço indisponível",
+            numero = tatuador.estudio?.endereco?.numero?: 123,
+            precoMinimo = tatuador.precoMin ?: 0.0,
             estilos = tatuador.estilos,
             fotoTatuador = R.drawable.grid_home3,
             fotosTatuagens = tatuagensMocadas,
@@ -227,7 +227,9 @@ fun SessaoCardsTatuadores(tatuador: TatuadorListagem, navController: NavHostCont
 fun CardProfissional(
     navController: NavHostController,
     nome: String,
-    endereco: String?,
+    sobrenome: String?,
+    rua: String?,
+    numero: Int?,
     precoMinimo: Double?,
     estilos: List<Estilo>,
     fotoTatuador: Int,
@@ -291,7 +293,7 @@ fun CardProfissional(
 
                 Column {
                     Text(
-                        text = nome,
+                        text = "$nome ${sobrenome ?: "nome indisponível"}",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.Black
@@ -303,17 +305,16 @@ fun CardProfissional(
                             imageVector = Icons.Filled.LocationOn,
                             contentDescription = "Localização",
                             tint = Color(0xFFA855F7),
-                            modifier = Modifier
-                                .size(15.dp)
-//
+                            modifier = Modifier.size(15.dp)
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = "$endereco",
+                            text = "${rua ?: "Rua indisponível"}, ${numero ?: "Número indisponível"}",
                             fontSize = 14.sp,
                             color = Color.Black
                         )
                     }
+
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -326,7 +327,7 @@ fun CardProfissional(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = "Preço mínimo: $precoMinimo",
+                            text = "Preço mínimo: ${precoMinimo ?: "Preço não disponível"}",
                             fontSize = 14.sp,
                             color = Color.Black,
                             fontWeight = FontWeight.Medium,
