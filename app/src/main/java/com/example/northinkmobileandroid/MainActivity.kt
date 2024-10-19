@@ -116,7 +116,7 @@ fun BarraInferiorNavegacao(
                 GerenciamentoContaEdicao(navController = navController)
             }
             composable("gerenciamentoContaPerfil") {
-                GerenciamentoContaPerfil(navController = navController)
+                GerenciamentoContaPerfil(navController = navController, tatuadorViewModel)
             }
             composable("gerenciamentoContaPortifolio") {
                 GerenciamentoContaPortifolio(navController = navController)

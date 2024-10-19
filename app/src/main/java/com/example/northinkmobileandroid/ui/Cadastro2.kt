@@ -148,7 +148,7 @@ fun Cadastro2(
                             celular= TextFieldValue(masked, TextRange(cursorPosition + (masked.length - newValue.text.length)))
                         }
                     },
-                    label = { Text("Celular ${tatuadorViewModel.nome}", color = Color.Black) },
+                    label = { Text("Celular", color = Color.Black) },
                     singleLine = true,
                     modifier = Modifier
                         .fillMaxWidth(),

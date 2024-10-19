@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -33,6 +34,7 @@ fun Login(
     navController: NavHostController,
     tatuadorViewModel: TatuadorViewModel = viewModel()
 ) {
+    val context = LocalContext.current
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
@@ -69,6 +71,7 @@ fun Login(
             tatuadorViewModel.loginEmail = email
             tatuadorViewModel.loginSenha = password
 
+            // Agora passando o contexto para o login
             tatuadorViewModel.login(
                 onSuccess = { loginResponse ->
                     snackbarMessage = "Login realizado com sucesso!"
@@ -77,11 +80,11 @@ fun Login(
                 },
                 onError = { error ->
                     loginErrorMessage = "E-mail ou senha inválidos."
-                }
+                },
+                context = context // Passando o context aqui
             )
         }
     }
-
 
     Box(
         modifier = Modifier

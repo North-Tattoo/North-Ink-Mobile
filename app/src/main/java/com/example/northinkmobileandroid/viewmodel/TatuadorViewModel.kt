@@ -7,9 +7,12 @@ import com.example.northinkmobileandroid.api.RetrofitInstance
 import com.example.northinkmobileandroid.data.model.Estilo
 import com.example.northinkmobileandroid.data.model.LoginRequest
 import com.example.northinkmobileandroid.data.model.LoginResponse
+import com.example.northinkmobileandroid.data.model.TatuadorAtualizacaoPerfil
 import com.example.northinkmobileandroid.data.model.TatuadorCriacao
 import kotlinx.coroutines.launch
 import retrofit2.Response
+import android.content.Context
+
 
 
 class TatuadorViewModel : ViewModel(){
@@ -23,12 +26,6 @@ class TatuadorViewModel : ViewModel(){
     var resumo: String = ""
     var estilos: List<Estilo> = listOf()
 
-    // Variáveis para armazenar o login
-    var loginEmail: String = ""
-    var loginSenha: String = ""
-    var userId: Int? = null
-    var token: String? = null
-    var loginNome: String? = null
 
     fun setDadosPessoais(nome: String, sobrenome: String, email: String, cpf: String) {
         this.nome = nome
@@ -78,18 +75,31 @@ class TatuadorViewModel : ViewModel(){
             }
         }
     }
+    // Variáveis para armazenar o login
+    var loginEmail: String = ""
+    var loginSenha: String = ""
+    var token: String? = null
+    var loginNome: String? = null
+
+    var userId: Long? = null
+        private set
 
     // Função de login
-    fun login(onSuccess: (LoginResponse) -> Unit, onError: (String) -> Unit) {
+    fun login(onSuccess: (LoginResponse) -> Unit, onError: (String) -> Unit, context: Context) {
         val loginRequest = LoginRequest(email = loginEmail, senha = loginSenha)
 
         viewModelScope.launch {
             try {
                 val response = RetrofitInstance.tatuadorApi.login(loginRequest)
+                Log.d("TatuadorViewModel", "LoginResponse: $response")
+
                 if (response.token.isNotEmpty()) {
                     userId = response.userId
                     token = response.token
                     loginNome = response.nome
+
+                    // Armazena o userId, token e nome no SharedPreferences
+                    loginUser(response, context)
 
                     onSuccess(response)
                 } else {
@@ -100,6 +110,51 @@ class TatuadorViewModel : ViewModel(){
             }
         }
     }
+
+    // Função para armazenar os dados de login no SharedPreferences
+    private fun loginUser(loginResponse: LoginResponse, context: Context) {
+        userId = loginResponse.userId
+        Log.d("TatuadorViewModel", "userId armazenado: $userId")
+
+        val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putLong("userId", loginResponse.userId)
+        editor.putString("token", loginResponse.token)
+        editor.putString("nome", loginResponse.nome)
+        editor.apply()
+    }
+
+    fun atualizarPerfilTatuador(usuario: TatuadorAtualizacaoPerfil, context: Context, onSuccess: () -> Unit, onError: (String) -> Unit) {
+        viewModelScope.launch {
+            try {
+
+                // Recupera o userId do SharedPreferences
+                val sharedPreferences =
+                    context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+                val storedUserId = sharedPreferences.getLong("userId", -1L)
+
+                if (storedUserId != -1L) {
+                    userId = storedUserId
+                    Log.d("TatuadorViewModel", "userId recuperado: $userId")
+
+                    // Prossegue com a atualização
+                    Log.d("TatuadorViewModel", "Enviando dados de atualização: $usuario")
+                    val response = RetrofitInstance.tatuadorApi.atualizarUsuario(userId!!, usuario)
+                    if (response.isSuccessful) {
+                        onSuccess()
+                    } else {
+                        onError("Erro ao atualizar perfil: ${response.code()} - ${response.message()}")
+                    }
+                } else {
+                    onError("Erro: userId é nulo ou não foi recuperado corretamente")
+                }
+            } catch (e: Exception) {
+                onError("Erro: ${e.message}")
+            }
+        }
+    }
+
+
 
 
 }
