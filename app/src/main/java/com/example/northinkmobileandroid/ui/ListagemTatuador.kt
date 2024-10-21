@@ -207,10 +207,10 @@ fun SessaoCardsTatuadores(tatuador: TatuadorListagem, navController: NavHostCont
         CardProfissional(
             navController = navController,
             id = tatuador.id,
-            nome = tatuador.nome ?: "Nome indisponível",
-            sobrenome = tatuador.sobrenome ?: "Sobrenome indisponível",
+            nome = tatuador.nome ?: "N/A",
+            sobrenome = tatuador.sobrenome ?: "N/A",
             rua = tatuador.estudio?.endereco?.rua ?: "Endereço indisponível",
-            numero = tatuador.estudio?.endereco?.numero?: 123,
+            numero = tatuador.estudio?.endereco?.numero?: 0,
             precoMinimo = tatuador.precoMin ?: 0.0,
             estilos = tatuador.estilos,
             fotoTatuador = R.drawable.grid_home3,
@@ -291,7 +291,7 @@ fun CardProfissional(
 
                 Column {
                     Text(
-                        text = "$nome ${sobrenome ?: "nome indisponível"}",
+                        text = "$nome ${sobrenome}",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.Black
@@ -307,7 +307,7 @@ fun CardProfissional(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = "${rua ?: "Rua indisponível"}, ${numero ?: "Número indisponível"}",
+                            text = "${rua}, ${numero}",
                             fontSize = 14.sp,
                             color = Color.Black
                         )
@@ -325,7 +325,7 @@ fun CardProfissional(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = "Preço mínimo: ${precoMinimo ?: "Preço não disponível"}",
+                            text = "Preço mínimo: ${precoMinimo}",
                             fontSize = 14.sp,
                             color = Color.Black,
                             fontWeight = FontWeight.Medium,

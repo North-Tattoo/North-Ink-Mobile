@@ -138,13 +138,13 @@ fun PerfilTatuador(
                     modifier = Modifier.weight(1f),
                 ) {
                     Text(
-                        text = "${portfolio?.nome ?: "Nome não disponível"} ${portfolio?.sobrenome ?: "Sobrenome não disponível"}",
+                        text = "${portfolio?.nome ?: "Nome N/A"} ${portfolio?.sobrenome ?: "N/A"}",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.Black
                     )
                     Text(
-                        text = "Preço Mínimo: R$ ${portfolio?.valorMin ?: "Preço Mínimo não disponível"}",
+                        text = "Preço Mínimo: R$ ${portfolio?.valorMin ?: "N/A"}",
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Medium,
                         textAlign = TextAlign.Start,
@@ -152,7 +152,7 @@ fun PerfilTatuador(
                         modifier = Modifier.padding(top = 4.dp)
                     )
                     Text(
-                        text = "Experiência: ${portfolio?.anosExperiencia ?: "Experiencia não disponível"}",
+                        text = "Experiência: ${portfolio?.anosExperiencia ?: "N/A"}",
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Medium,
                         textAlign = TextAlign.Start,
@@ -352,7 +352,7 @@ fun PerfilTatuador(
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = "${portfolio?.estudio?.endereco?.rua ?: "Rua não disponível"}, ${portfolio?.estudio?.endereco?.numero ?: "Número não disponível"} - ${portfolio?.estudio?.endereco?.bairro ?: "Bairro não disponível"}, ${portfolio?.estudio?.endereco?.cidade ?: "Cidade não disponível"} - ${portfolio?.estudio?.endereco?.estado ?: "Estado não disponível"}, ${portfolio?.estudio?.endereco?.cep ?: "CEP não disponível"}",
+                                text = "${portfolio?.estudio?.endereco?.rua ?: "Endereço não disponível"}, ${portfolio?.estudio?.endereco?.numero} - ${portfolio?.estudio?.endereco?.bairro}, ${portfolio?.estudio?.endereco?.cidade} - ${portfolio?.estudio?.endereco?.estado}, ${portfolio?.estudio?.endereco?.cep }",
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.Gray
@@ -471,7 +471,7 @@ fun PerfilTatuador(
                                         val whatsappUrl = "https://wa.me/+55${numeroWhatsAppFormatado}?text=${Uri.encode(mensagem)}"
 
                                         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(whatsappUrl))
-                                        
+
                                         context.startActivity(intent)
                                     },
                                     modifier = Modifier.weight(1f),
