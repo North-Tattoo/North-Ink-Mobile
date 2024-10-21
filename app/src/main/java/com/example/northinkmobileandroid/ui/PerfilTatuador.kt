@@ -1,5 +1,7 @@
 package com.example.northinkmobileandroid.ui
 
+import android.content.Intent
+import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -159,7 +161,6 @@ fun PerfilTatuador(
                     )
                 }
             }
-        }
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -318,7 +319,11 @@ fun PerfilTatuador(
                                             ),
                                         contentAlignment = Alignment.Center
                                     ) {
-                                        Text(text = estilo.nome, color = Color.White, fontSize = 14.sp)
+                                        Text(
+                                            text = estilo.nome,
+                                            color = Color.White,
+                                            fontSize = 14.sp
+                                        )
                                     }
                                 }
                             }
@@ -429,9 +434,14 @@ fun PerfilTatuador(
                                 Spacer(modifier = Modifier.width(8.dp))
 
                                 // Icone do Instagram
-                                IconButton(onClick = { /* ação para abrir Instagram */ }) {
+                                IconButton(onClick = {
+                                    val instagramUrl = "https://www.instagram.com/${portfolio?.instagram}"
+
+                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(instagramUrl))
+                                    context.startActivity(intent)
+                                }) {
                                     Icon(
-                                        painter = painterResource(id = R.drawable.instagram), // substitua pelo ícone do Instagram
+                                        painter = painterResource(id = R.drawable.instagram),
                                         contentDescription = "Instagram",
                                         tint = Color.Unspecified,
                                         modifier = Modifier.size(30.dp)
@@ -451,7 +461,19 @@ fun PerfilTatuador(
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
                                 Button(
-                                    onClick = { },
+                                    onClick = {
+                                        val numeroWhatsApp = portfolio?.telefone
+                                        val mensagem = "Olá, gostaria de saber mais sobre seus serviços!"
+
+                                        val numeroWhatsAppFormatado =
+                                            numeroWhatsApp?.replace(Regex("[^0-9]"), "")
+
+                                        val whatsappUrl = "https://wa.me/+55${numeroWhatsAppFormatado}?text=${Uri.encode(mensagem)}"
+
+                                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(whatsappUrl))
+                                        
+                                        context.startActivity(intent)
+                                    },
                                     modifier = Modifier.weight(1f),
                                     shape = RoundedCornerShape(8.dp),
                                     colors = ButtonDefaults.buttonColors(
@@ -477,6 +499,8 @@ fun PerfilTatuador(
             }
         }
     }
+}
+
 
 
 
