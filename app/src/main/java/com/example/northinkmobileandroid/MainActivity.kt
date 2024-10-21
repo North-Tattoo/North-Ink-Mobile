@@ -106,8 +106,13 @@ fun BarraInferiorNavegacao(
             composable("cadastro3") {
                 Cadastro3(navController = navController, tatuadorViewModel)
             }
-            composable("perfilTatuador") {
-                PerfilTatuador(navController = navController)
+            composable("perfilTatuador/{tatuadorId}") {
+                backStackEntry ->
+                val tatuadorId = backStackEntry.arguments?.getString("tatuadorId")?.toLongOrNull()
+
+                tatuadorId?.let {
+                    PerfilTatuador(navController = navController, tatuadorId = it, tatuadorViewModel = tatuadorViewModel)
+                }
             }
             composable("gerenciamentoConta") {
                 GerenciamentoConta(navController = navController)
@@ -119,7 +124,7 @@ fun BarraInferiorNavegacao(
                 GerenciamentoContaPerfil(navController = navController, tatuadorViewModel)
             }
             composable("gerenciamentoContaPortifolio") {
-                GerenciamentoContaPortifolio(navController = navController)
+                GerenciamentoContaPortifolio(navController = navController, tatuadorViewModel)
             }
             composable("gerenciamentoContaEstudio") {
                 GerenciamentoContaEstudio(navController = navController)

@@ -242,7 +242,7 @@ fun GerenciamentoContaEdicao(
                 }
 
                 "Portfólio" -> {
-                    GerenciamentoContaPortifolio(navController)
+                    GerenciamentoContaPortifolio(navController, tatuadorViewModel)
                 }
 
                 "Estúdio" -> {

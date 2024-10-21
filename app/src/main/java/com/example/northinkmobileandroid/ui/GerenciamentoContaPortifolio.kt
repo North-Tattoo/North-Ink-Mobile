@@ -1,6 +1,7 @@
 package com.example.northinkmobileandroid.ui
 
 import android.icu.text.NumberFormat
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -17,41 +18,55 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
 import com.example.northinkmobileandroid.R
+import com.example.northinkmobileandroid.viewmodel.TatuadorViewModel
 import java.text.DecimalFormat
 import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GerenciamentoContaPortifolio(navController: NavController) {
+fun GerenciamentoContaPortifolio(
+    navController: NavController,
+    tatuadorViewModel: TatuadorViewModel
+) {
 
     var precoMinimo by remember { mutableStateOf("") }
     var experiencia by remember { mutableStateOf("") }
     var biografia by remember { mutableStateOf("") }
+    var instagram by remember { mutableStateOf("") }
 
     var biografiaError by remember { mutableStateOf("") }
     var precoMinimoError by remember { mutableStateOf("") }
     var experienciaError by remember { mutableStateOf("") }
     var instagramError by remember { mutableStateOf("") }
-    var estilosError by remember { mutableStateOf("") }
 
-    var instagram by remember { mutableStateOf("") }
+    var showSnackbar by remember { mutableStateOf(false) }
+    var snackbarMessage by remember { mutableStateOf("") }
+    val snackbarHostState = remember { SnackbarHostState() }
 
+    var errorMessage by remember { mutableStateOf("") }
+    var successMessage by remember { mutableStateOf("") }
+
+    val estilosSelecionados = remember { mutableStateListOf<String>() }
     val estilos = listOf("Old School", "New School", "Realismo", "Aquarela", "Blackwork", "Minimalismo",
         "Lettering", "Geométrico", "Pontilhismo", "Neo Tradition", "Oriental", "Trash Polka")
-    val estilosSelecionados = remember { mutableStateListOf<String>() }
+
+    val context = LocalContext.current
 
     var expanded by remember { mutableStateOf(false) }
     val interactionSource = remember { MutableInteractionSource() }
@@ -64,19 +79,56 @@ fun GerenciamentoContaPortifolio(navController: NavController) {
         "Mais de 10 anos"
     )
 
-    fun formatPrecoMinimo(input: String): String {
-        return try {
-            val cleanString = input.replace("[R$,]".toRegex(), "")
-            val parsed = cleanString.toDoubleOrNull() ?: 0.0
-            val formatter = java.text.NumberFormat.getCurrencyInstance(Locale("pt", "BR")) as DecimalFormat
-            formatter.applyPattern("R$ ###,##0.00")
-            formatter.format(parsed / 100)
-        } catch (e: Exception) {
-            "R$ 0,00"
-        }
+    // Função para formatar o valor com a máscara
+    fun formatarPreco(preco: String): String {
+        val cleanString = preco.replace("[^\\d]".toRegex(), "")
+        if (cleanString.isEmpty()) return "R$ 0,00"
+        val parsed = cleanString.toDouble() / 100
+        val formatter = java.text.NumberFormat.getCurrencyInstance(Locale("pt", "BR"))
+        return formatter.format(parsed)
     }
 
+    // Função para converter o valor formatado de volta para Double
+    fun precoMinimoParaDouble(preco: String): Double {
+        val cleanString = preco.replace("[R$\\s]".toRegex(), "").replace(",", ".")
+        return cleanString.toDoubleOrNull() ?: 0.0
+    }
+
+
     val scrollState = rememberScrollState()
+
+    fun validarCampos(): Boolean {
+        var isValid = true
+        if (precoMinimo.isEmpty()) {
+            precoMinimoError = "O preço mínimo é obrigatório."
+            isValid = false
+        } else {
+            precoMinimoError = ""
+        }
+
+        if (experiencia.isEmpty()) {
+            experienciaError = "O tempo de experiência é obrigatório."
+            isValid = false
+        } else {
+            experienciaError = ""
+        }
+
+        if (biografia.length < 10) {
+            biografiaError = "A biografia precisa ter pelo menos 10 caracteres."
+            isValid = false
+        } else {
+            biografiaError = ""
+        }
+
+        if (instagram.isEmpty()) {
+            instagramError = "O Instagram é obrigatório."
+            isValid = false
+        } else {
+            instagramError = ""
+        }
+
+        return isValid
+    }
 
     // Layout principal com rolagem
     Column(
@@ -121,7 +173,7 @@ fun GerenciamentoContaPortifolio(navController: NavController) {
         OutlinedTextField(
             value = precoMinimo,
             onValueChange = {
-                precoMinimo = formatPrecoMinimo(it)
+                precoMinimo = formatarPreco(it)
             },
             label = { Text("Preço Mínimo", color = Color.Black) },
             singleLine = true,
@@ -142,6 +194,7 @@ fun GerenciamentoContaPortifolio(navController: NavController) {
             shape = RoundedCornerShape(20.dp),
             modifier = Modifier.fillMaxWidth()
         )
+
         if (precoMinimoError.isNotEmpty()) {
             Text(text = precoMinimoError, color = Color.Red, fontSize = 12.sp)
         }
@@ -262,45 +315,27 @@ fun GerenciamentoContaPortifolio(navController: NavController) {
         // Botão de Salvar
         Button(
             onClick = {
-                // Validação de todos os campos
-                var isValid = true
-                if (precoMinimo.isEmpty()) {
-                    precoMinimoError = "O preço mínimo é obrigatório."
-                    isValid = false
-                } else {
-                    precoMinimoError = ""
-                }
+                if (validarCampos()) {
+                    val precoMinimoDouble = precoMinimoParaDouble(precoMinimo)
+                    val tempoExperiencia = experiencia
+                    val resumo = biografia
+                    val instagramHandle = instagram
 
-                if (experiencia.isEmpty()) {
-                    experienciaError = "O tempo de experiência é obrigatório."
-                    isValid = false
-                } else {
-                    experienciaError = ""
-                }
-
-                if (biografia.length < 10) {
-                    biografiaError = "A biografia precisa ter pelo menos 10 caracteres."
-                    isValid = false
-                } else {
-                    biografiaError = ""
-                }
-
-                if (instagram.isEmpty()) {
-                    instagramError = "O Instagram é obrigatório."
-                    isValid = false
-                } else {
-                    instagramError = ""
-                }
-
-                if (estilosSelecionados.isEmpty()) {
-                    estilosError = "Selecione pelo menos um estilo."
-                    isValid = false
-                } else {
-                    estilosError = ""
-                }
-
-                if (isValid) {
-
+                    // Chame a função do ViewModel para enviar os dados ao backend
+                    tatuadorViewModel.atualizarPortifolioTatuador(
+                        precoMinimo = precoMinimoDouble,
+                        tempoExperiencia = tempoExperiencia,
+                        biografia = resumo,
+                        instagram = instagramHandle,
+                        onSuccess = {
+                            snackbarMessage = "Perfil Atualizado com sucesso!"
+                            showSnackbar = true
+                        },
+                        onError = { errorMessage ->
+                            Log.d("Erro","Erro ao salvar portfólio: $errorMessage")
+                        },
+                        context
+                    )
                 }
             },
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9333EA)),
@@ -312,5 +347,51 @@ fun GerenciamentoContaPortifolio(navController: NavController) {
         ) {
             Text(text = "Salvar", color = Color.White, fontSize = 18.sp)
         }
+
+        if (showSnackbar) {
+            LaunchedEffect(snackbarMessage) {
+                snackbarHostState.showSnackbar(snackbarMessage)
+                kotlinx.coroutines.delay(500)
+                navController.navigate("gerenciamentoConta")
+            }
+        }
+
+        if (showSnackbar) {
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier
+                    .padding(top = 16.dp),
+                snackbar = { snackbarData ->
+                    Snackbar(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .background(Color(0xFF171717), RoundedCornerShape(12.dp)),
+                        containerColor = Color(0xFF171717),
+                        contentColor = Color.White,
+                        shape = RoundedCornerShape(12.dp),
+                        content = {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Info,
+                                    contentDescription = "Info",
+                                    tint = Color(0xFFA855F7),
+                                    modifier = Modifier.size(24.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = snackbarData.visuals.message,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                            }
+                        }
+                    )
+                }
+            )
+        }
     }
 }
+

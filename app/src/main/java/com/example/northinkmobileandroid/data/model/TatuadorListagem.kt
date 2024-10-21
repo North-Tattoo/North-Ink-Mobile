@@ -1,7 +1,7 @@
 package com.example.northinkmobileandroid.data.model
 
 data class TatuadorListagem(
-    val id: Int?,
+    val id: Long,
     val nome: String,
     val sobrenome: String?,
     val precoMin: Double?,

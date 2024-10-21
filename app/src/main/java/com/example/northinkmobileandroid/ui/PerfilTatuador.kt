@@ -1,5 +1,6 @@
 package com.example.northinkmobileandroid.ui
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -32,7 +33,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -52,14 +55,32 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.northinkmobileandroid.R
+import com.example.northinkmobileandroid.viewmodel.TatuadorViewModel
 
 
 @Composable
-fun PerfilTatuador(modifier: Modifier = Modifier, navController: NavController) {
+fun PerfilTatuador(
+    modifier: Modifier = Modifier,
+    navController: NavController,
+    tatuadorId: Long,
+    tatuadorViewModel: TatuadorViewModel
+) {
+    Log.d("PerfilTatuador", "Recebendo userId na tela: $tatuadorId")
     var selectedTab by remember { mutableStateOf("Tattos") }
 
     val iconColor = Color(0xFF581C87)
     val context = LocalContext.current
+
+    val tatuadorPortfolio by tatuadorViewModel.tatuadorPortfolio.observeAsState()
+    val error by tatuadorViewModel.error.observeAsState()
+
+    // Carregar os dados ao iniciar
+    LaunchedEffect(tatuadorId) {
+        tatuadorViewModel.getTatuadorPortfolio(tatuadorId)
+    }
+
+    val portfolio = tatuadorPortfolio
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -115,13 +136,13 @@ fun PerfilTatuador(modifier: Modifier = Modifier, navController: NavController) 
                     modifier = Modifier.weight(1f),
                 ) {
                     Text(
-                        text = "name",
+                        text = "${portfolio?.nome ?: "Nome não disponível"} ${portfolio?.sobrenome ?: "Sobrenome não disponível"}",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.Black
                     )
                     Text(
-                        text = stringResource(id = R.string.valor_perfil_artista),
+                        text = "Preço Mínimo: R$ ${portfolio?.valorMin ?: "Preço Mínimo não disponível"}",
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Medium,
                         textAlign = TextAlign.Start,
@@ -129,7 +150,7 @@ fun PerfilTatuador(modifier: Modifier = Modifier, navController: NavController) 
                         modifier = Modifier.padding(top = 4.dp)
                     )
                     Text(
-                        text = stringResource(id = R.string.tempo_perfil_artista),
+                        text = "Experiência: ${portfolio?.anosExperiencia ?: "Experiencia não disponível"}",
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Medium,
                         textAlign = TextAlign.Start,
@@ -138,6 +159,7 @@ fun PerfilTatuador(modifier: Modifier = Modifier, navController: NavController) 
                     )
                 }
             }
+        }
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -258,13 +280,15 @@ fun PerfilTatuador(modifier: Modifier = Modifier, navController: NavController) 
                                 fontWeight = FontWeight.Medium
                             )
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = stringResource(id = R.string.bio_texto_perfil_artista),
-                                fontSize = 14.sp,
-                                color = Color.Black,
-                                modifier = Modifier.padding(top = 0.dp),
-                                textAlign = TextAlign.Start
-                            )
+                            portfolio?.resumo?.let {
+                                Text(
+                                    text = it,
+                                    fontSize = 14.sp,
+                                    color = Color.Black,
+                                    modifier = Modifier.padding(top = 0.dp),
+                                    textAlign = TextAlign.Start
+                                )
+                            }
                         }
                         Text(
                             text = stringResource(id = R.string.estilos_perfil_artista),
@@ -284,27 +308,18 @@ fun PerfilTatuador(modifier: Modifier = Modifier, navController: NavController) 
                             verticalArrangement = Arrangement.spacedBy(8.dp),
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            items(
-                                listOf(
-                                    "Traço Fino",
-                                    "Pontilhismo",
-                                    "Aquarela",
-                                    "Realismo",
-                                    "Geometria",
-                                    "Minimalista"
-                                )
-                            )
-                            { estilo ->
-                                // Botões não clicáveis, usando Box para simular um botão
-                                Box(
-                                    modifier = Modifier
-                                        .background(
-                                            color = colorResource(id = R.color.corBotao),
-                                            shape = RoundedCornerShape(10.dp)
-                                        ),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(text = estilo, color = Color.White, fontSize = 14.sp)
+                            if (portfolio != null) {
+                                items(portfolio.estilos) { estilo ->
+                                    Box(
+                                        modifier = Modifier
+                                            .background(
+                                                color = colorResource(id = R.color.corBotao),
+                                                shape = RoundedCornerShape(10.dp)
+                                            ),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(text = estilo.nome, color = Color.White, fontSize = 14.sp)
+                                    }
                                 }
                             }
                         }
@@ -332,7 +347,7 @@ fun PerfilTatuador(modifier: Modifier = Modifier, navController: NavController) 
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = stringResource(id = R.string.endereco_completo),
+                                text = "${portfolio?.estudio?.endereco?.rua ?: "Rua não disponível"}, ${portfolio?.estudio?.endereco?.numero ?: "Número não disponível"} - ${portfolio?.estudio?.endereco?.bairro ?: "Bairro não disponível"}, ${portfolio?.estudio?.endereco?.cidade ?: "Cidade não disponível"} - ${portfolio?.estudio?.endereco?.estado ?: "Estado não disponível"}, ${portfolio?.estudio?.endereco?.cep ?: "CEP não disponível"}",
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.Gray
@@ -353,13 +368,15 @@ fun PerfilTatuador(modifier: Modifier = Modifier, navController: NavController) 
 
                                 // Informações da loja
                                 Column {
-                                    Text(
-                                        modifier = Modifier.padding(start = 6.dp),
-                                        text = stringResource(id = R.string.estudio_ambiente_trabalho),
-                                        fontSize = 18.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = Color.Black
-                                    )
+                                    portfolio?.estudio?.let {
+                                        Text(
+                                            modifier = Modifier.padding(start = 6.dp),
+                                            text = it.nome ?: "Nome não disponível",
+                                            fontSize = 18.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color.Black
+                                        )
+                                    }
                                 }
                             }
 
@@ -372,12 +389,14 @@ fun PerfilTatuador(modifier: Modifier = Modifier, navController: NavController) 
                                 color = Color.Black
                             )
                             Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                text = stringResource(id = R.string.descricao_texto_ambiente_trabalho),
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.Gray
-                            )
+                            portfolio?.estudio?.let {
+                                Text(
+                                    text = it.descricao ?: "Descrição não disponível",
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.Gray
+                                )
+                            }
 
                             // Linha preta para separar os blocos
                             Spacer(modifier = Modifier.height(50.dp))
@@ -458,5 +477,6 @@ fun PerfilTatuador(modifier: Modifier = Modifier, navController: NavController) 
             }
         }
     }
-}
+
+
 

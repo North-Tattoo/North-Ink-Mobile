@@ -1,5 +1,6 @@
 package com.example.northinkmobileandroid.ui
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -158,7 +159,7 @@ fun ListagemTatuador(navController: NavHostController, modifier: Modifier = Modi
                 ), // IDs das imagens
                 imageDescriptions = listOf("Aquarela", "Blackwork", "Neo Traditional", "Geometrico",
                     "Minimalista", "Lettering","New School", "Old School", "Oriental", "Trash Polka",
-                    "Pontilhismo", "Realismo") // Descrições das imagens
+                    "Pontilhismo", "Realismo")
             )
         }
         Text(
@@ -168,7 +169,7 @@ fun ListagemTatuador(navController: NavHostController, modifier: Modifier = Modi
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(top = 30.dp, bottom = 60.dp, start = 15.dp)
         )
-        // Exibir a lista de tatuadores
+
         if (tatuadores.value.isNotEmpty()) {
             tatuadores.value.forEach { tatuador ->
                 SessaoCardsTatuadores(tatuador, navController)
@@ -181,12 +182,7 @@ fun ListagemTatuador(navController: NavHostController, modifier: Modifier = Modi
                 modifier = Modifier.padding(16.dp)
             )
         }
-
-//        repeat(5) { // Exemplo: repete os cards 5 vezes
-//            SessaoCardsTatuadores(navController)
-//        }
     }
-//}
 }
 
 @Composable
@@ -210,6 +206,7 @@ fun SessaoCardsTatuadores(tatuador: TatuadorListagem, navController: NavHostCont
         // Exemplo de Card de Profissional
         CardProfissional(
             navController = navController,
+            id = tatuador.id,
             nome = tatuador.nome ?: "Nome indisponível",
             sobrenome = tatuador.sobrenome ?: "Sobrenome indisponível",
             rua = tatuador.estudio?.endereco?.rua ?: "Endereço indisponível",
@@ -226,6 +223,7 @@ fun SessaoCardsTatuadores(tatuador: TatuadorListagem, navController: NavHostCont
 @Composable
 fun CardProfissional(
     navController: NavHostController,
+    id: Long,
     nome: String,
     sobrenome: String?,
     rua: String?,
@@ -372,6 +370,7 @@ fun CardProfissional(
             ) {
                 Button(
                     onClick = {
+
                        },
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(8.dp),
@@ -393,7 +392,8 @@ fun CardProfissional(
                 }
                 Button(
                     onClick = {
-                        navController.navigate("perfilTatuador")
+                        navController.navigate("perfilTatuador/${id}")
+                        Log.d("ListagemTatuador", "Navegando para PerfilTatuador com userId: $id")
                     },
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(8.dp),
