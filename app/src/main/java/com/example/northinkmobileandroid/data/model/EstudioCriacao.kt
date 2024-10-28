@@ -1,9 +1,9 @@
 package com.example.northinkmobileandroid.data.model
 
-data class Estudio(
-    val id: Long?,
+data class EstudioCriacao(
     val nome: String,
     val descricao: String,
-    val endereco: Endereco
+    val fkUsuario: Long
+
 ) {
 }

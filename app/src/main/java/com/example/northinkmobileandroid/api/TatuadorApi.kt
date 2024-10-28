@@ -1,5 +1,9 @@
 package com.example.northinkmobileandroid.api
 
+import com.example.northinkmobileandroid.data.model.Endereco
+import com.example.northinkmobileandroid.data.model.EnderecoCriacao
+import com.example.northinkmobileandroid.data.model.Estudio
+import com.example.northinkmobileandroid.data.model.EstudioCriacao
 import com.example.northinkmobileandroid.data.model.LoginRequest
 import com.example.northinkmobileandroid.data.model.LoginResponse
 import com.example.northinkmobileandroid.data.model.TatuadorAtualizacaoPerfil
@@ -10,6 +14,7 @@ import com.example.northinkmobileandroid.data.model.TatuadorListagemPortifolio
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
@@ -39,5 +44,15 @@ interface TatuadorApi {
         @Path("id") id: Long,
         @Body usuario: TatuadorAtualizacaoPortifolio
     ): Response<TatuadorAtualizacaoPortifolio>
+
+    @POST("api/estudios")
+    suspend fun criarEstudio(
+        @Header("Authorization") token: String,
+        @Body estudio: EstudioCriacao): Response<Estudio>
+
+    @POST("api/enderecos")
+    suspend fun criarEndereco(
+        @Header("Authorization") token: String,
+        @Body endereco: EnderecoCriacao): Response<Endereco>
 
 }

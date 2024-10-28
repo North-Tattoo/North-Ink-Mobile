@@ -39,6 +39,7 @@ android {
     buildFeatures {
         compose = true
         viewBinding = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -88,5 +89,10 @@ dependencies {
     implementation ("androidx.compose.material:material:<version>")
     implementation ("androidx.compose.ui:ui-tooling:<version>")
     implementation ("io.coil-kt:coil-compose:2.0.0")
+    // Dependências do Koin
+    implementation ("io.insert-koin:koin-android:4.0.0")
+    implementation ("io.insert-koin:koin-core:3.4.0")
+    implementation ("io.insert-koin:koin-androidx-compose:3.4.0")
+
 
 }

@@ -246,7 +246,7 @@ fun GerenciamentoContaEdicao(
                 }
 
                 "Estúdio" -> {
-                    GerenciamentoContaEstudio(navController)
+                    GerenciamentoContaEstudio(navController, tatuadorViewModel)
                 }
 
                 else -> {}

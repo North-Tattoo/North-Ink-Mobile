@@ -295,7 +295,7 @@ import java.time.format.TextStyle
                     // Passar o contexto para a função de atualização
                     tatuadorViewModel.atualizarPerfilTatuador(
                         usuarioAtualizado,
-                        context,  // Contexto obtido aqui
+                        context,
                         onSuccess = {
                             snackbarMessage = "Perfil Atualizado com sucesso!"
                             showSnackbar = true

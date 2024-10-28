@@ -1,5 +1,6 @@
 package com.example.northinkmobileandroid.ui
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -26,12 +27,19 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
+import com.example.northinkmobileandroid.data.model.EstudioCriacao
+import com.example.northinkmobileandroid.viewmodel.TatuadorViewModel
+import org.koin.androidx.compose.getViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GerenciamentoContaEstudio(navController: NavController) {
+fun GerenciamentoContaEstudio(
+    navController: NavController,
+    tatuadorViewModel: TatuadorViewModel
+) {
 
     var nomeEstudio by remember { mutableStateOf("") }
     var descricao by remember { mutableStateOf("") }
@@ -55,6 +63,8 @@ fun GerenciamentoContaEstudio(navController: NavController) {
     var cidadeError by remember { mutableStateOf("") }
 
     val scrollState = rememberScrollState()
+
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -321,14 +331,14 @@ fun GerenciamentoContaEstudio(navController: NavController) {
                 if (bairro.isEmpty()) {
                     bairroError = "O bairro é obrigatório."
                     isValid = false
-                }  else {
+                } else {
                     bairroError = ""
                 }
 
                 if (numero.isEmpty()) {
                     numeroError = "O número é obrigatório."
                     isValid = false
-                }  else {
+                } else {
                     numeroError = ""
                 }
 
@@ -340,7 +350,35 @@ fun GerenciamentoContaEstudio(navController: NavController) {
                 }
 
                 if (isValid) {
+                    tatuadorViewModel.criarEstudio(
+                        nomeEstudio,
+                        descricao,
+                        context,
+                        onSuccess = { estudio ->
+                            Log.d("UpdateSuccess", "Estúdio criado com sucesso!")
 
+                            // Após o estúdio ser criado, chama criarEndereco
+                            tatuadorViewModel.criarEndereco(
+                                rua = rua,
+                                numero = numero.toInt(),
+                                complemento = complemento,
+                                cep = cep,
+                                bairro = bairro,
+                                cidade = cidade,
+                                estado = estado,
+                                context = context,
+                                onSuccess = {
+                                    Log.d("EnderecoSuccess", "Endereço criado com sucesso!")
+                                },
+                                onError = { errorMessage ->
+                                    Log.d("EnderecoError", "Erro ao criar endereço: $errorMessage")
+                                }
+                            )
+                        },
+                        onError = { errorMessage ->
+                            Log.d("UpdateError", "Erro ao criar estúdio: $errorMessage")
+                        }
+                    )
                 }
             },
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9333EA)),
