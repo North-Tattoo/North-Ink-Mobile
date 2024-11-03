@@ -14,7 +14,6 @@
     import android.content.Context
     import androidx.lifecycle.LiveData
     import androidx.lifecycle.MutableLiveData
-    import com.example.northinkmobileandroid.api.AuthRepository
     import com.example.northinkmobileandroid.api.TatuadorApi
     import com.example.northinkmobileandroid.data.model.EnderecoCriacao
     import com.example.northinkmobileandroid.data.model.Estudio
@@ -27,8 +26,6 @@
 
 
     class TatuadorViewModel : ViewModel(), KoinComponent {
-
-        private val authRepository: AuthRepository = AuthRepository()
 
         private val sessaoUsuario: SessaoUsuario by inject()
 
@@ -91,7 +88,7 @@
                 }
             }
         }
-        // Variáveis para armazenar o login
+
         var loginEmail: String = ""
         var loginSenha: String = ""
         var token: String? = null
@@ -100,7 +97,7 @@
         var userId: Long? = null
             private set
 
-        // Função de login
+
         fun login(onSuccess: (LoginResponse) -> Unit, onError: (String) -> Unit, context: Context) {
             val loginRequest = LoginRequest(email = loginEmail, senha = loginSenha)
 
@@ -114,20 +111,26 @@
                         token = response.token
                         loginNome = response.nome
 
-                        // Armazena o userId, token e nome no SharedPreferences
+
                         loginUser(response, context)
 
-                        val sessaoUsuario = SessaoUsuario(
-                            userId = response.userId,
-                            login = loginEmail,
-                            nome = response.nome,
-                            token = response.token
-                        )
+                        sessaoUsuario.email = response.email
+                        sessaoUsuario.nome = response.nome
+                        sessaoUsuario.token = response.token
+                        sessaoUsuario.userId = response.userId
+                        Log.d("TatuadorViewModel", "Sessão atualizada: $sessaoUsuario")
 
-                        authRepository.updateSession(sessaoUsuario)
-
-                        // (Opcional) Salva a sessão no SharedPreferences
-                        authRepository.saveSession(sessaoUsuario, context)
+//                        val sessaoUsuario = SessaoUsuario(
+//                            userId = response.userId,
+//                            login = loginEmail,
+//                            nome = response.nome,
+//                            token = response.token
+//                        )
+//
+//                        authRepository.updateSession(sessaoUsuario)
+//
+//                        // (Opcional) Salva a sessão no SharedPreferences
+//                        authRepository.saveSession(sessaoUsuario, context)
 
                         onSuccess(response)
 
@@ -140,7 +143,6 @@
             }
         }
 
-        // Função para armazenar os dados de login no SharedPreferences
         private fun loginUser(loginResponse: LoginResponse, context: Context) {
             userId = loginResponse.userId
             Log.d("TatuadorViewModel", "userId armazenado: $userId")
@@ -157,7 +159,6 @@
             viewModelScope.launch {
                 try {
 
-                    // Recupera o userId do SharedPreferences
                     val sharedPreferences =
                         context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
                     val storedUserId = sharedPreferences.getLong("userId", -1L)
@@ -166,7 +167,6 @@
                         userId = storedUserId
                         Log.d("TatuadorViewModel", "userId recuperado: $userId")
 
-                        // Prossegue com a atualização
                         Log.d("TatuadorViewModel", "Enviando dados de atualização: $usuario")
                         val response = RetrofitInstance.tatuadorApi.atualizarUsuario(userId!!, usuario)
                         if (response.isSuccessful) {
@@ -188,6 +188,7 @@
             tempoExperiencia: String,
             biografia: String,
             instagram: String,
+            estilos: List<Estilo>,
             onSuccess: () -> Unit,
             onError: (String) -> Unit,
             context: Context
@@ -202,13 +203,15 @@
                         userId = storedUserId
                         Log.d("TatuadorViewModel", "userId recuperado: $userId")
 
-                        // Envia os dados de atualização de portfólio
+
                         val portifolioAtualizacao = TatuadorAtualizacaoPortifolio(
                             id = storedUserId,
                             precoMin = precoMinimo,
                             anosExperiencia = tempoExperiencia,
                             resumo = biografia,
-                            instagram = instagram
+                            instagram = instagram,
+                            estilos = estilos
+
                         )
 
                         Log.d("TatuadorViewModel", "Enviando dados de atualização de portfólio: $portifolioAtualizacao")
@@ -263,18 +266,20 @@
             viewModelScope.launch {
                 try {
                     // Recupera o userId e o token do SharedPreferences
-                    val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-                    val storedUserId = sharedPreferences.getLong("userId", -1L)
-                    val sessaoAtual = authRepository.getSession()
-                    val token = sharedPreferences.getString("token", null)
+//                    val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+//                    val storedUserId = sharedPreferences.getLong("userId", -1L)
+//                    val token = sharedPreferences.getString("token", null)
 
-                    if (storedUserId != -1L && token != null) {
+                    val token = sessaoUsuario.token
+                    val userId = sessaoUsuario.userId
+
+                    if (userId != -1L && token != null) {
                         val estudioCriacao = EstudioCriacao(
                             nome = nome,
                             descricao = descricao,
-                            fkUsuario = storedUserId
+                            fkUsuario = userId
                         )
-                        Log.d("TatuadorViewModel", "Token recuperado: ${sessaoUsuario?.token}")
+                        Log.d("TatuadorViewModel", "Token recuperado: ${sessaoUsuario.token}")
 
                         // Faz a requisição para criar o estúdio com o Bearer Token
                         val response = RetrofitInstance.tatuadorApi.criarEstudio("Bearer $token", estudioCriacao)
@@ -316,13 +321,16 @@
             viewModelScope.launch {
                 try {
                     // Recupera o userId e o token do SharedPreferences
-                    val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-                    val storedUserId = sharedPreferences.getLong("userId", -1L)
-                    val sessaoAtual = authRepository.getSession()
-                    val token = sharedPreferences.getString("token", null)
+//                    val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+//                    val storedUserId = sharedPreferences.getLong("userId", -1L)
+//                    val token = sharedPreferences.getString("token", null)
+
+                    val token = sessaoUsuario.token
+                    val userId = sessaoUsuario.userId
 
 
-                        if (_estudioId != null && storedUserId != -1L && token != null) {
+
+                        if (_estudioId != null && userId != -1L && token != null) {
                             val enderecoCriacao = EnderecoCriacao(
                                 rua = rua,
                                 numero = numero,

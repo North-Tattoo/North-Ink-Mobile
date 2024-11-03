@@ -34,6 +34,7 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
 import com.example.northinkmobileandroid.R
+import com.example.northinkmobileandroid.data.model.Estilo
 import com.example.northinkmobileandroid.viewmodel.TatuadorViewModel
 import java.text.DecimalFormat
 import java.util.*
@@ -63,8 +64,21 @@ fun GerenciamentoContaPortifolio(
     var successMessage by remember { mutableStateOf("") }
 
     val estilosSelecionados = remember { mutableStateListOf<String>() }
-    val estilos = listOf("Old School", "New School", "Realismo", "Aquarela", "Blackwork", "Minimalismo",
-        "Lettering", "Geométrico", "Pontilhismo", "Neo Tradition", "Oriental", "Trash Polka")
+
+    val listaDeEstilos = listOf(
+        Estilo("Old School"),
+        Estilo("New School"),
+        Estilo("Realismo"),
+        Estilo("Aquarela"),
+        Estilo("Blackwork"),
+        Estilo("Minimalismo"),
+        Estilo("Lettering"),
+        Estilo("Geométrico"),
+        Estilo("Pontilhismo"),
+        Estilo("Neo Tradition"),
+        Estilo("Oriental"),
+        Estilo("Trash Polka")
+    )
 
     val context = LocalContext.current
 
@@ -130,7 +144,7 @@ fun GerenciamentoContaPortifolio(
         return isValid
     }
 
-    // Layout principal com rolagem
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -138,15 +152,15 @@ fun GerenciamentoContaPortifolio(
             .verticalScroll(scrollState),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Grid de Estilos
+
         LazyVerticalGrid(
             columns = GridCells.Fixed(3),
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.height(200.dp) // Definido um limite de altura para evitar problemas de layout
+            modifier = Modifier.height(200.dp)
         ) {
-            items(estilos) { estilo ->
-                val isSelected = estilosSelecionados.contains(estilo)
+            items(listaDeEstilos) { estilo ->
+                val isSelected = estilosSelecionados.contains(estilo.nome)
 
                 Box(
                     modifier = Modifier
@@ -157,14 +171,14 @@ fun GerenciamentoContaPortifolio(
                         .padding(8.dp)
                         .clickable {
                             if (isSelected) {
-                                estilosSelecionados.remove(estilo)
+                                estilosSelecionados.remove(estilo.nome)
                             } else {
-                                estilosSelecionados.add(estilo)
+                                estilosSelecionados.add(estilo.nome)
                             }
                         },
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(text = estilo, color = Color.White, fontSize = 14.sp)
+                    Text(text = estilo.nome, color = Color.White, fontSize = 14.sp)
                 }
             }
         }
@@ -199,7 +213,6 @@ fun GerenciamentoContaPortifolio(
             Text(text = precoMinimoError, color = Color.Red, fontSize = 12.sp)
         }
 
-        // Tempo de experiência dropdown
         ExposedDropdownMenuBox(
             expanded = expanded,
             onExpandedChange = { expanded = !expanded }
@@ -254,12 +267,11 @@ fun GerenciamentoContaPortifolio(
         Text(text = experienciaError, color = Color.Red, fontSize = 12.sp)
     }
 
-        // Biografia input
         OutlinedTextField(
             value = biografia,
             onValueChange = { biografia = it
                 if (biografia.length >= 10) {
-                    biografiaError = "" // Limpar mensagem de erro se o campo for válido
+                    biografiaError = ""
                 } },
             label = { Text("Biografia", color = Color.Black) },
             modifier = Modifier.fillMaxWidth().height(200.dp),
@@ -281,7 +293,7 @@ fun GerenciamentoContaPortifolio(
         }
 
 
-        // Instagram input
+
         OutlinedTextField(
             value = instagram,
             onValueChange = { instagram = it },
@@ -290,7 +302,7 @@ fun GerenciamentoContaPortifolio(
             singleLine = true,
             trailingIcon = {
                 Icon(
-                    painter = painterResource(id = R.drawable.instagram), // Substitua pelo ícone correto
+                    painter = painterResource(id = R.drawable.instagram),
                     contentDescription = "Instagram",
                     tint = Color.Unspecified
                 )
@@ -320,13 +332,17 @@ fun GerenciamentoContaPortifolio(
                     val tempoExperiencia = experiencia
                     val resumo = biografia
                     val instagramHandle = instagram
+                    val estilosSelecionadosList = estilosSelecionados.mapNotNull { estiloNome ->
+                        listaDeEstilos.find { it.nome == estiloNome }
+                    }
 
-                    // Chame a função do ViewModel para enviar os dados ao backend
                     tatuadorViewModel.atualizarPortifolioTatuador(
                         precoMinimo = precoMinimoDouble,
                         tempoExperiencia = tempoExperiencia,
                         biografia = resumo,
                         instagram = instagramHandle,
+                        estilos = estilosSelecionadosList,
+
                         onSuccess = {
                             snackbarMessage = "Perfil Atualizado com sucesso!"
                             showSnackbar = true

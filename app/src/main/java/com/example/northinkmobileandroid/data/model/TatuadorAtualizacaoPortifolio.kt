@@ -5,7 +5,8 @@ data class TatuadorAtualizacaoPortifolio(
     val precoMin: Double,
     val anosExperiencia: String,
     val resumo: String,
-    val instagram: String
+    val instagram: String,
+    val estilos: List<Estilo>
 )
 {
 }
