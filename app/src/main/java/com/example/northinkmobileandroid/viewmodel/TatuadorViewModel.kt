@@ -239,7 +239,7 @@
 
 
         fun getTatuadorPortfolio(id: Long) {
-            Log.d("TatuadorViewModel", "Chamando getTatuadorPortfolio com userId: $id")
+
             viewModelScope.launch {
                 try {
                     val response = RetrofitInstance.tatuadorApi.getTatuadorPortfolio(id)
@@ -250,6 +250,31 @@
                     }
                 } catch (e: Exception) {
                     _error.value = "Erro: ${e.localizedMessage}"
+                }
+            }
+        }
+
+        private val _tatuadorPortfolioLogado = MutableLiveData<TatuadorListagemPortifolio>()
+        val tatuadorPortfolioLogado: LiveData<TatuadorListagemPortifolio> = _tatuadorPortfolioLogado
+
+        private val _errorLog = MutableLiveData<String>()
+        val errorLog: LiveData<String> = _errorLog
+
+
+        fun carregarTatuadorPortfolio(){
+
+            val userId = sessaoUsuario.userId
+
+            viewModelScope.launch {
+                try {
+                    val response = RetrofitInstance.tatuadorApi.getTatuadorPortfolio(userId)
+                    if (response.isSuccessful) {
+                        _tatuadorPortfolioLogado.value = response.body()
+                    } else {
+                        _errorLog.value = "Erro ao carregar dados"
+                    }
+                } catch (e: Exception) {
+                    _errorLog.value = "Erro: ${e.localizedMessage}"
                 }
             }
         }
