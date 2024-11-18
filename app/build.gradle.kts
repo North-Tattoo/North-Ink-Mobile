@@ -96,6 +96,7 @@ dependencies {
 //    Cloudinary
     implementation ("com.cloudinary:kotlin-url-gen:1.7.0")
     implementation("io.coil-kt:coil-compose:2.2.2")
+    implementation ("io.insert-koin:koin-android:3.4.0")
 
 
 

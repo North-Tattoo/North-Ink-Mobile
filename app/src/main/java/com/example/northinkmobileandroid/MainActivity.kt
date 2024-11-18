@@ -36,6 +36,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.northinkmobileandroid.di.SessaoUsuario
 import com.example.northinkmobileandroid.viewmodel.TatuadorViewModel
 import com.example.northinkmobileandroid.ui.Cadastro
 import com.example.northinkmobileandroid.ui.Cadastro2
@@ -50,6 +51,8 @@ import com.example.northinkmobileandroid.ui.ListagemTatuador
 import com.example.northinkmobileandroid.ui.Login
 import com.example.northinkmobileandroid.ui.PerfilTatuador
 import com.example.northinkmobileandroid.ui.theme.NorthInkMobileAndroidTheme
+
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,6 +82,7 @@ fun BarraInferiorNavegacao(
     val purpleBarColor = Color(0xFF9333EA)
 
     val tatuadorViewModel: TatuadorViewModel = viewModel()
+
 
     Box(modifier = modifier
         .fillMaxSize()
@@ -115,7 +119,8 @@ fun BarraInferiorNavegacao(
                 }
             }
             composable("gerenciamentoConta") {
-                GerenciamentoConta(navController = navController,
+                GerenciamentoConta(
+                    navController = navController,
                     tatuadorViewModel = tatuadorViewModel
                 )
             }

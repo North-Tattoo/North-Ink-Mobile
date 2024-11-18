@@ -44,6 +44,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -66,7 +67,7 @@ import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import com.example.northinkmobileandroid.R
-import com.example.northinkmobileandroid.api.service.uploadImageToCloudinary
+import com.example.northinkmobileandroid.api.service.UploadService
 import com.example.northinkmobileandroid.viewmodel.TatuadorViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -93,9 +94,12 @@ fun GerenciamentoConta(
     var uploadError by remember { mutableStateOf<Boolean?>(null) }
 
     val coroutineScope = rememberCoroutineScope()
-    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+
+    val selectedImageUris = remember { mutableStateListOf<Uri>() }
 
     var showToast by remember { mutableStateOf(false) }
+
+    val uploadService = remember { UploadService() }
 
     // Chama a função para carregar o portfólio ao compor a tela
     LaunchedEffect(Unit) {
@@ -105,7 +109,9 @@ fun GerenciamentoConta(
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
         onResult = { uri: Uri? ->
-            selectedImageUri = uri
+            uri?.let {
+                selectedImageUris.add(it) // Adiciona a imagem selecionada à lista
+            }
         }
     )
 
@@ -290,22 +296,16 @@ fun GerenciamentoConta(
                     verticalArrangement = Arrangement.spacedBy(1.4.dp),
                     horizontalArrangement = Arrangement.spacedBy(1.5.dp)
                 ) {
-                    selectedImageUri?.let { uri ->
-                        item {
-                            val painter = rememberImagePainter(
-                                data = uri,
-                                builder = {
-                                    crossfade(true)
-                                    size(500)
-                                }
-                            )
-
-                            Image(
-                                painter = painter,
-                                contentDescription = "Imagem selecionada",
-                                modifier = Modifier.size(150.dp)
-                            )
-                        }
+                    items(selectedImageUris) { uri ->
+                        val painter = rememberImagePainter(data = uri)
+                        Image(
+                            painter = painter,
+                            contentDescription = "Imagem selecionada",
+                            modifier = Modifier
+                                .size(150.dp)
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(Color.Gray)
+                        )
                     }
 
                     // Adiciona um quadrado com símbolo de upload
@@ -327,28 +327,29 @@ fun GerenciamentoConta(
                             )
                         }
                         // Chamada do upload dentro de uma coroutine
-                        selectedImageUri?.let { uri ->
-                            coroutineScope.launch(Dispatchers.IO) { // Garante que a requisição será feita no background
-                                val file = uriToFile(context, uri) // Converte a Uri para File
-                                if (file != null) {
-                                    // Chama a função de upload com o arquivo convertido
-                                    val result = uploadImageToCloudinary(context, file)
-                                    withContext(Dispatchers.Main) {
-                                        if (result != null) {
-                                            uploadUrl = result
-                                            uploadError = false
-                                        } else {
-                                            uploadError = true
-                                        }
-                                    }
-                                } else {
-                                    withContext(Dispatchers.Main) {
-                                        uploadError = true
+                        coroutineScope.launch(Dispatchers.IO) {
+                            val files =
+                                selectedImageUris.mapNotNull { uri -> uriToFile(context, uri) }
+                            if (files.isNotEmpty()) {
+                                val uploadedUrls =
+                                    uploadService.uploadImagesToCloudinary(context, files)
+                                withContext(Dispatchers.Main) {
+                                    if (uploadedUrls.isNotEmpty()) {
+                                        Toast.makeText(
+                                            context,
+                                            "Upload bem-sucedido de ${uploadedUrls.size} imagens!",
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                    } else {
+                                        Toast.makeText(
+                                            context,
+                                            "Erro no upload!",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                     }
                                 }
                             }
                         }
-
 
                         Column(modifier = modifier.fillMaxSize()) {
                             // Feedback do upload
