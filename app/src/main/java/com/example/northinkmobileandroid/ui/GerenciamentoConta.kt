@@ -1,7 +1,12 @@
 package com.example.northinkmobileandroid.ui
 
+import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -28,6 +33,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Photo
+import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material.icons.filled.Whatsapp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -40,6 +46,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,8 +63,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberImagePainter
 import com.example.northinkmobileandroid.R
+import com.example.northinkmobileandroid.api.service.uploadImageToCloudinary
 import com.example.northinkmobileandroid.viewmodel.TatuadorViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
 
 
 @Composable
@@ -74,10 +88,26 @@ fun GerenciamentoConta(
     val portfolio by tatuadorViewModel.tatuadorPortfolioLogado.observeAsState()
     val error by tatuadorViewModel.error.observeAsState()
 
+
+    var uploadUrl by remember { mutableStateOf<String?>(null) }  // Guarda a URL da imagem no Cloudinary
+    var uploadError by remember { mutableStateOf<Boolean?>(null) }
+
+    val coroutineScope = rememberCoroutineScope()
+    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+
+    var showToast by remember { mutableStateOf(false) }
+
     // Chama a função para carregar o portfólio ao compor a tela
     LaunchedEffect(Unit) {
         tatuadorViewModel.carregarTatuadorPortfolio()
     }
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { uri: Uri? ->
+            selectedImageUri = uri
+        }
+    )
 
     Column(
         modifier = modifier
@@ -156,7 +186,7 @@ fun GerenciamentoConta(
                         color = Color.Black
                     )
                     Text(
-                        text =  "Preço mínimo: R$ ${portfolio?.valorMin ?: "Informação não cadastrada"}",
+                        text =  "Preço mínimo: R$ ${portfolio?.valorMin ?: "N/A"}",
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Medium,
                         textAlign = TextAlign.Start,
@@ -257,23 +287,87 @@ fun GerenciamentoConta(
                     columns = GridCells.Fixed(2),
                     modifier = Modifier
                         .fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(1.5.dp),
+                    verticalArrangement = Arrangement.spacedBy(1.4.dp),
                     horizontalArrangement = Arrangement.spacedBy(1.5.dp)
                 ) {
-                    items(
-                        listOf(
-                            R.drawable.tatuagem_card1,
-                            R.drawable.tatuagem_card2,
-                            R.drawable.tatuagem_card3,
-                            R.drawable.tatuagem_card1
-                        )
-                    ) { imageRes ->
-                        Image(
-                            painter = painterResource(id = imageRes),
-                            contentDescription = null
-                        )
+                    selectedImageUri?.let { uri ->
+                        item {
+                            val painter = rememberImagePainter(
+                                data = uri,
+                                builder = {
+                                    crossfade(true)
+                                    size(500)
+                                }
+                            )
+
+                            Image(
+                                painter = painter,
+                                contentDescription = "Imagem selecionada",
+                                modifier = Modifier.size(150.dp)
+                            )
+                        }
+                    }
+
+                    // Adiciona um quadrado com símbolo de upload
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .size(150.dp) // Certifique-se de que o tamanho é igual ao das outras imagens
+                                .background(Color.LightGray)
+                                .clickable {
+                                    launcher.launch("image/*")
+                                    },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Upload,
+                                contentDescription = "Upload de imagem",
+                                tint = Color.Gray,
+                                modifier = Modifier.size(48.dp)
+                            )
+                        }
+                        // Chamada do upload dentro de uma coroutine
+                        selectedImageUri?.let { uri ->
+                            coroutineScope.launch(Dispatchers.IO) { // Garante que a requisição será feita no background
+                                val file = uriToFile(context, uri) // Converte a Uri para File
+                                if (file != null) {
+                                    // Chama a função de upload com o arquivo convertido
+                                    val result = uploadImageToCloudinary(context, file)
+                                    withContext(Dispatchers.Main) {
+                                        if (result != null) {
+                                            uploadUrl = result
+                                            uploadError = false
+                                        } else {
+                                            uploadError = true
+                                        }
+                                    }
+                                } else {
+                                    withContext(Dispatchers.Main) {
+                                        uploadError = true
+                                    }
+                                }
+                            }
+                        }
+
+
+                        Column(modifier = modifier.fillMaxSize()) {
+                            // Feedback do upload
+                            when {
+                                uploadUrl != null && !showToast -> {
+                                    Toast.makeText(context, "Upload bem-sucedido! URL: $uploadUrl", Toast.LENGTH_LONG).show()
+                                    showToast = true
+                                    uploadUrl = null
+                                }
+                                uploadError == true && !showToast -> {
+                                    Toast.makeText(context, "Erro no upload!", Toast.LENGTH_SHORT).show()
+                                    showToast = true
+                                    uploadError = null
+                                }
+                            }
+                        }
                     }
                 }
+
             } else {
                 LazyColumn(
                     modifier = Modifier
@@ -421,5 +515,17 @@ fun GerenciamentoConta(
             }
         }
     }
+}
+
+// Função auxiliar para converter Uri para File
+fun uriToFile(context: Context, uri: Uri): File? {
+    val contentResolver = context.contentResolver
+    val tempFile = File(context.cacheDir, "temp_image")
+    contentResolver.openInputStream(uri)?.use { inputStream ->
+        tempFile.outputStream().use { outputStream ->
+            inputStream.copyTo(outputStream)
+        }
+    }
+    return tempFile.takeIf { it.exists() }
 }
 

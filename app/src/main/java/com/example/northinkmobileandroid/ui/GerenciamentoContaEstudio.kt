@@ -165,13 +165,14 @@ fun GerenciamentoContaEstudio(
         if (ruaError.isNotEmpty()) {
             Text(text = ruaError, color = Color.Red, fontSize = 12.sp)
         }
-
-        // Complemento
+        
+        // Número
         OutlinedTextField(
-            value = complemento,
-            onValueChange = { complemento = it },
-            label = { Text("Complemento", color = Color.Black) },
-            isError = complementoError.isNotEmpty(),
+            value = numero,
+            onValueChange = { numero = it },
+            label = { Text("Número", color = Color.Black) },
+            isError = numeroError.isNotEmpty(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.fillMaxWidth(),
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 focusedBorderColor = Color(0xFFA855F7),
@@ -185,31 +186,8 @@ fun GerenciamentoContaEstudio(
             ),
             shape = RoundedCornerShape(20.dp)
         )
-        if (complementoError.isNotEmpty()) {
-            Text(text = complementoError, color = Color.Red, fontSize = 12.sp)
-        }
-
-        // Estado
-        OutlinedTextField(
-            value = estado,
-            onValueChange = { estado = it },
-            label = { Text("Estado", color = Color.Black) },
-            isError = estadoError.isNotEmpty(),
-            modifier = Modifier.fillMaxWidth(),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = Color(0xFFA855F7),
-                unfocusedBorderColor = Color(0xFFA855F7),
-                focusedLabelColor = Color(0xFFA855F7),
-                focusedTextColor = Color.Black,
-                unfocusedTextColor = Color.Black,
-                unfocusedLabelColor = Color.Gray,
-                errorTextColor = Color.Black,
-                containerColor = Color.White,
-            ),
-            shape = RoundedCornerShape(20.dp)
-        )
-        if (estadoError.isNotEmpty()) {
-            Text(text = estadoError, color = Color.Red, fontSize = 12.sp)
+        if (numeroError.isNotEmpty()) {
+            Text(text = numeroError, color = Color.Red, fontSize = 12.sp)
         }
 
         // Bairro
@@ -234,14 +212,12 @@ fun GerenciamentoContaEstudio(
         if (bairroError.isNotEmpty()) {
             Text(text = bairroError, color = Color.Red, fontSize = 12.sp)
         }
-
-        // Número
+        // Complemento
         OutlinedTextField(
-            value = numero,
-            onValueChange = { numero = it },
-            label = { Text("Número", color = Color.Black) },
-            isError = numeroError.isNotEmpty(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            value = complemento,
+            onValueChange = { complemento = it },
+            label = { Text("Complemento", color = Color.Black) },
+            isError = complementoError.isNotEmpty(),
             modifier = Modifier.fillMaxWidth(),
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 focusedBorderColor = Color(0xFFA855F7),
@@ -255,8 +231,30 @@ fun GerenciamentoContaEstudio(
             ),
             shape = RoundedCornerShape(20.dp)
         )
-        if (numeroError.isNotEmpty()) {
-            Text(text = numeroError, color = Color.Red, fontSize = 12.sp)
+        if (complementoError.isNotEmpty()) {
+            Text(text = complementoError, color = Color.Red, fontSize = 12.sp)
+        }
+        // Estado
+        OutlinedTextField(
+            value = estado,
+            onValueChange = { estado = it },
+            label = { Text("Estado", color = Color.Black) },
+            isError = estadoError.isNotEmpty(),
+            modifier = Modifier.fillMaxWidth(),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = Color(0xFFA855F7),
+                unfocusedBorderColor = Color(0xFFA855F7),
+                focusedLabelColor = Color(0xFFA855F7),
+                focusedTextColor = Color.Black,
+                unfocusedTextColor = Color.Black,
+                unfocusedLabelColor = Color.Gray,
+                errorTextColor = Color.Black,
+                containerColor = Color.White,
+            ),
+            shape = RoundedCornerShape(20.dp)
+        )
+        if (estadoError.isNotEmpty()) {
+            Text(text = estadoError, color = Color.Red, fontSize = 12.sp)
         }
         // Cidade
         OutlinedTextField(
@@ -314,13 +312,6 @@ fun GerenciamentoContaEstudio(
                     ruaError = ""
                 }
 
-                if (complemento.isEmpty()) {
-                    complementoError = "O complemento é obrigatório."
-                    isValid = false
-                } else {
-                    complementoError = ""
-                }
-
                 if (estado.isEmpty()) {
                     estadoError = "O estado é obrigatório."
                     isValid = false
@@ -369,6 +360,7 @@ fun GerenciamentoContaEstudio(
                                 context = context,
                                 onSuccess = {
                                     Log.d("EnderecoSuccess", "Endereço criado com sucesso!")
+                                    navController.navigate("gerenciamentoConta")
                                 },
                                 onError = { errorMessage ->
                                     Log.d("EnderecoError", "Erro ao criar endereço: $errorMessage")

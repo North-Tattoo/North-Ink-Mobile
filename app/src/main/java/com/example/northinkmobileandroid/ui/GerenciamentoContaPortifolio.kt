@@ -368,7 +368,6 @@ fun GerenciamentoContaPortifolio(
             LaunchedEffect(snackbarMessage) {
                 snackbarHostState.showSnackbar(snackbarMessage)
                 kotlinx.coroutines.delay(500)
-                navController.navigate("gerenciamentoConta")
             }
         }
 
