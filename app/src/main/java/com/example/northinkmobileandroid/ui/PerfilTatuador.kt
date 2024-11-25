@@ -56,8 +56,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.rememberImagePainter
 import com.example.northinkmobileandroid.R
 import com.example.northinkmobileandroid.viewmodel.TatuadorViewModel
+import kotlinx.coroutines.delay
 
 
 @Composable
@@ -74,12 +76,20 @@ fun PerfilTatuador(
     val context = LocalContext.current
 
     val tatuadorPortfolio by tatuadorViewModel.tatuadorPortfolio.observeAsState()
+    val imagens by tatuadorViewModel.imagensPortifolio.observeAsState(emptyList())
+    Log.d("PerfilTatuador", "imagens: $imagens")
+
     val error by tatuadorViewModel.error.observeAsState()
 
     // Carregar os dados ao iniciar
     LaunchedEffect(tatuadorId) {
+        Log.d("PerfilTatuador", "Buscando portfólio para o tatuadorId: $tatuadorId")
         tatuadorViewModel.getTatuadorPortfolio(tatuadorId)
+        delay(500)
+        tatuadorViewModel.buscarImagensDoCloudinary()
+
     }
+
 
     val portfolio = tatuadorPortfolio
 
@@ -234,6 +244,7 @@ fun PerfilTatuador(
                 }
             }
         }
+
 //        Sessão de tatuagem
         Column(
             modifier = Modifier
@@ -248,18 +259,30 @@ fun PerfilTatuador(
                     verticalArrangement = Arrangement.spacedBy(1.5.dp),
                     horizontalArrangement = Arrangement.spacedBy(1.5.dp)
                 ) {
-                    items(
-                        listOf(
-                            R.drawable.tatuagem_card1,
-                            R.drawable.tatuagem_card2,
-                            R.drawable.tatuagem_card3,
-                            R.drawable.tatuagem_card1
-                        )
-                    ) { imageRes ->
+                    items(imagens) { imageUrl ->
+                        if (imagens.isEmpty()) {
+                            Text(
+                                text = "Nenhuma imagem encontrada.",
+                                modifier = Modifier.align(Alignment.CenterHorizontally)
+                            )
+                        }
+
                         Image(
-                            painter = painterResource(id = imageRes),
-                            contentDescription = null
+                            painter = rememberImagePainter(
+                                data = imageUrl,
+                                builder = {
+                                    crossfade(true)
+                                    placeholder(R.drawable.grid_home3)
+                                    error(R.drawable.tatuagem_card3)
+                                }
+                            ),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(150.dp)
+                                .clip(RoundedCornerShape(8.dp)),
+                            contentScale = ContentScale.Crop
                         )
+
                     }
                 }
             } else {

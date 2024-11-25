@@ -15,12 +15,15 @@
     import androidx.lifecycle.LiveData
     import androidx.lifecycle.MutableLiveData
     import com.example.northinkmobileandroid.api.TatuadorApi
+    import com.example.northinkmobileandroid.api.service.UploadService
     import com.example.northinkmobileandroid.data.model.EnderecoCriacao
     import com.example.northinkmobileandroid.data.model.Estudio
     import com.example.northinkmobileandroid.data.model.EstudioCriacao
     import com.example.northinkmobileandroid.data.model.TatuadorAtualizacaoPortifolio
     import com.example.northinkmobileandroid.data.model.TatuadorListagemPortifolio
     import com.example.northinkmobileandroid.di.SessaoUsuario
+    import kotlinx.coroutines.Dispatchers
+    import kotlinx.coroutines.withContext
     import org.koin.core.component.KoinComponent
     import org.koin.core.component.inject
 
@@ -28,7 +31,7 @@
     class TatuadorViewModel : ViewModel(), KoinComponent {
 
         private val sessaoUsuario: SessaoUsuario by inject()
-
+        private val uploadService: UploadService by inject()
 
         var nome: String = ""
         var sobrenome: String = ""
@@ -119,18 +122,6 @@
                         sessaoUsuario.token = response.token
                         sessaoUsuario.userId = response.userId
                         Log.d("TatuadorViewModel", "Sessão atualizada: $sessaoUsuario")
-
-//                        val sessaoUsuario = SessaoUsuario(
-//                            userId = response.userId,
-//                            login = loginEmail,
-//                            nome = response.nome,
-//                            token = response.token
-//                        )
-//
-//                        authRepository.updateSession(sessaoUsuario)
-//
-//                        // (Opcional) Salva a sessão no SharedPreferences
-//                        authRepository.saveSession(sessaoUsuario, context)
 
                         onSuccess(response)
 
@@ -379,6 +370,37 @@
                     }
                 } catch (e: Exception) {
                     onError("Erro: ${e.localizedMessage}")
+                }
+            }
+        }
+
+        private val _imagensPortifolio = MutableLiveData<List<String>>()
+        val imagensPortifolio: LiveData<List<String>> = _imagensPortifolio
+
+        fun buscarImagensDoCloudinary() {
+            viewModelScope.launch(Dispatchers.IO) {
+                try {
+
+                    val userId = 2
+                    Log.d("CloudinaryFetch", "userId: $userId") // Log antes de usar o userId
+                    val userName = "Sophia"
+                    Log.d("CloudinaryFetch", "userName: $userName") // Log antes de usar o userName
+                    val folderPath = "tatuadores/$userId/$userName"
+                    Log.d("CloudinaryFetch", "Caminho da pasta: $folderPath") // Log antes de criar o caminho
+
+                    val imagens = uploadService.buscarImagensDaPastaCloudinary(folderPath)
+                    Log.d("PastaCloudinary", "Buscando imagens para pasta: $folderPath")
+
+                    withContext(Dispatchers.Main) {
+                        _imagensPortifolio.postValue(imagens)
+                    }
+
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        _error.postValue("Erro ao carregar imagens do portfólio: ${e.localizedMessage}")
+                    }
+                    Log.e("CloudinaryFetch", "Erro: ${e.localizedMessage}")
+
                 }
             }
         }
