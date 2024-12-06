@@ -42,20 +42,25 @@ import androidx.compose.material.icons.filled.Paid
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Whatsapp
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.navigation.NavHostController
 import android.widget.Toast
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.material3.Text // Importação correta para Text da Material3
+import androidx.compose.material3.Text 
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberImagePainter
 import com.example.northinkmobileandroid.data.model.Estilo
 import com.example.northinkmobileandroid.R
 import com.example.northinkmobileandroid.api.RetrofitInstance
+import com.example.northinkmobileandroid.api.service.UploadService
 import com.example.northinkmobileandroid.data.model.TatuadorListagem
 import com.example.northinkmobileandroid.data.model.Tatuagem
+import com.example.northinkmobileandroid.viewmodel.TatuadorViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Composable
 fun ListagemTatuador(navController: NavHostController, modifier: Modifier = Modifier) {
@@ -186,7 +191,34 @@ fun ListagemTatuador(navController: NavHostController, modifier: Modifier = Modi
 }
 
 @Composable
-fun SessaoCardsTatuadores(tatuador: TatuadorListagem, navController: NavHostController) {
+fun SessaoCardsTatuadores(
+    tatuador: TatuadorListagem,
+    navController: NavHostController,
+    tatuadorViewModel: TatuadorViewModel = viewModel()
+) {
+    val imagensPortifolio by tatuadorViewModel.imagensPortifolio.observeAsState(initial = emptyList())
+
+    var profilePictureUrl by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(tatuador.id) {
+        tatuadorViewModel.buscarImagensDoCloudinary()
+    }
+
+    // Busca a imagem de perfil do Cloudinary
+    LaunchedEffect(tatuador.id) {
+        val userId = tatuador.id
+        val userName = tatuador.nome?.trim() ?: "usuario"
+        val folderPath = "tatuadores/$userId/$userName/profile_picture"
+
+        try {
+            val imagens = withContext(Dispatchers.IO) {
+                UploadService().buscarImagensDaPastaCloudinary(folderPath)
+            }
+            profilePictureUrl = imagens.firstOrNull()
+        } catch (e: Exception) {
+            Log.e("SessaoCardsTatuadores", "Erro ao buscar imagens: ${e.message}")
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -198,8 +230,8 @@ fun SessaoCardsTatuadores(tatuador: TatuadorListagem, navController: NavHostCont
     ) {
 
         val tatuagensMocadas = listOf(
-            Tatuagem(imagemUrl = R.drawable.grid_home3), // Ou passe uma URL mock se necessário
-            Tatuagem(imagemUrl = R.drawable.grid_home3), // Mais tatuagens mocadas
+            Tatuagem(imagemUrl = R.drawable.grid_home3),
+            Tatuagem(imagemUrl = R.drawable.grid_home3),
             Tatuagem(imagemUrl = R.drawable.grid_home3)
         )
 
@@ -213,8 +245,8 @@ fun SessaoCardsTatuadores(tatuador: TatuadorListagem, navController: NavHostCont
             numero = tatuador.estudio?.endereco?.numero?: 0,
             precoMinimo = tatuador.precoMin ?: 0.0,
             estilos = tatuador.estilos,
-            fotoTatuador = R.drawable.grid_home3,
-            fotosTatuagens = tatuagensMocadas,
+            fotoTatuador =  profilePictureUrl,
+            fotosTatuagens = imagensPortifolio.take(3),
 
         )
     }
@@ -230,8 +262,8 @@ fun CardProfissional(
     numero: Int?,
     precoMinimo: Double?,
     estilos: List<Estilo>,
-    fotoTatuador: Int,
-    fotosTatuagens: List<Tatuagem>?,
+    fotoTatuador: String?,
+    fotosTatuagens: List<String>?,
 
     ) {
     val context = LocalContext.current
@@ -253,19 +285,18 @@ fun CardProfissional(
                     .horizontalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                fotosTatuagens?.forEach { tatuagem ->
-                    val imageUrl = tatuagem.imagemUrl
-                    val painter = if (imageUrl != null) {
-                        rememberImagePainter(data = imageUrl) // Usando Coil para carregar a imagem da API
+                fotosTatuagens?.forEach { imagemUrl ->
+                    val painter = if (imagemUrl != null) {
+                        rememberImagePainter(data = imagemUrl)
                     } else {
-                        painterResource(id = R.drawable.tatuagem_card3) // Imagem "mocada"
+                        painterResource(id = R.drawable.tatuagem_card3)
                     }
 
                     Image(
-                        painter = painterResource(id = R.drawable.tatuagem_card3),
+                        painter = painter,
                         contentDescription = "Foto da tatuagem",
                         modifier = Modifier
-                            .size(300.dp)
+                            .size(120.dp)
                             .clip(RoundedCornerShape(8.dp)),
                         contentScale = ContentScale.Crop
                     )
@@ -278,14 +309,26 @@ fun CardProfissional(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-                Image(
-                    painter = painterResource(id = fotoTatuador),
-                    contentDescription = "Foto do Tatuador",
-                    modifier = Modifier
-                        .size(80.dp)
-                        .clip(CircleShape),
-                    contentScale = ContentScale.Crop
-                )
+                if (fotoTatuador == null) {
+                    Box(
+                        modifier = Modifier
+                            .size(80.dp)
+                            .clip(CircleShape)
+                            .background(Color.Gray.copy(alpha = 0.2f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(color = Color(0xFFA855F7))
+                    }
+                } else {
+                    Image(
+                        painter = rememberImagePainter(data = fotoTatuador),
+                        contentDescription = "Foto do Tatuador",
+                        modifier = Modifier
+                            .size(80.dp)
+                            .clip(CircleShape),
+                        contentScale = ContentScale.Crop
+                    )
+                }
 
                 Spacer(modifier = Modifier.width(16.dp))
 
@@ -379,7 +422,7 @@ fun CardProfissional(
                     )
                 ) {
                     Icon(
-                        imageVector = Icons.Filled.Whatsapp, // Substitua isso pelo ícone correto
+                        imageVector = Icons.Filled.Whatsapp,
                         contentDescription = "WhatsApp",
                         tint = Color.White,
                         modifier = Modifier.size(20.dp)
@@ -432,12 +475,12 @@ fun CustomOutlinedTextField(label: String, modifier: Modifier = Modifier) {
         singleLine = true,
         shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp),
         colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = Color(0xFFA855F7),  // Borda roxa quando focado
-            unfocusedBorderColor = Color(0xFFA855F7),  // Borda roxa quando não focado
-            focusedLabelColor = Color(0xFFA855F7),  // Label roxa quando focado
-            unfocusedLabelColor = Color.Gray,  // Label cinza quando não focado
-            containerColor = Color.White,  // Cor de fundo branco
-            focusedTextColor = Color.Black,  // Cor do texto digitado
+            focusedBorderColor = Color(0xFFA855F7),
+            unfocusedBorderColor = Color(0xFFA855F7),
+            focusedLabelColor = Color(0xFFA855F7),
+            unfocusedLabelColor = Color.Gray,
+            containerColor = Color.White,
+            focusedTextColor = Color.Black,
             unfocusedTextColor = Color.Black
 
         ),
@@ -447,8 +490,8 @@ fun CustomOutlinedTextField(label: String, modifier: Modifier = Modifier) {
 
 @Composable
 fun SimpleImageCarousel(
-    images: List<Int>, // Lista de IDs de recursos de imagem
-    imageDescriptions: List<String> // Lista de descrições para as imagens
+    images: List<Int>,
+    imageDescriptions: List<String>
 ) {
     Row(
         modifier = Modifier
@@ -465,8 +508,8 @@ fun SimpleImageCarousel(
                     .padding(8.dp, top = 180.dp, end = 8.dp)
                     .size(250.dp)
                     .clip(RoundedCornerShape(8.dp))
-                    .background(Color.Black.copy(alpha = 0.6f)) // Adiciona sombra
-                    .clickable { isTextVisible = !isTextVisible } // Alterna visibilidade ao clicar
+                    .background(Color.Black.copy(alpha = 0.6f))
+                    .clickable { isTextVisible = !isTextVisible }
             ) {
                 Image(
                     painter = painterResource(id = image),

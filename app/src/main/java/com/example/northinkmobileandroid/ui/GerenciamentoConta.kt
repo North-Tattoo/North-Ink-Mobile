@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.FileUtils
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -32,11 +33,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.PersonAddAlt1
+import androidx.compose.material.icons.filled.PersonPinCircle
 import androidx.compose.material.icons.filled.Photo
 import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material.icons.filled.Whatsapp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -69,6 +74,7 @@ import coil.compose.rememberImagePainter
 import com.example.northinkmobileandroid.R
 import com.example.northinkmobileandroid.api.service.UploadService
 import com.example.northinkmobileandroid.viewmodel.TatuadorViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -101,6 +107,10 @@ fun GerenciamentoConta(
 
     val uploadService = remember { UploadService() }
 
+    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+    var profilePictureUrl by remember { mutableStateOf<String?>(null) }
+    var isUploading by remember { mutableStateOf(false) }
+
     // Chama a função para carregar o portfólio ao compor a tela
     LaunchedEffect(Unit) {
         tatuadorViewModel.carregarTatuadorPortfolio()
@@ -111,6 +121,31 @@ fun GerenciamentoConta(
         onResult = { uri: Uri? ->
             uri?.let {
                 selectedImageUris.add(it) // Adiciona a imagem selecionada à lista
+            }
+        }
+    )
+
+    val galleryLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { uri ->
+            selectedImageUri = uri
+            uri?.let {
+                val file = uriToFile(context, it)
+                file?.let {
+                    isUploading = true
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val uploadedUrl = uploadService.uploadProfilePicture(context, it)
+                        withContext(Dispatchers.Main) {
+                            isUploading = false
+                            if (uploadedUrl != null) {
+                                profilePictureUrl = uploadedUrl
+                                Toast.makeText(context, "Foto de perfil enviada com sucesso!", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(context, "Falha no upload da foto.", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
+                } ?: Toast.makeText(context, "Erro ao processar a imagem selecionada.", Toast.LENGTH_SHORT).show()
             }
         }
     )
@@ -167,19 +202,33 @@ fun GerenciamentoConta(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 50.dp, end = 16.dp),
+                    .padding(start = 40.dp, end = 14.dp, bottom = 20.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.grid_home3),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .size(100.dp)
-                        .clip(CircleShape)
-                )
+                // Foto de perfil
+                Box(modifier = Modifier.clickable { galleryLauncher.launch("image/*") }) {
+                    if (isUploading) {
+                        CircularProgressIndicator(modifier = Modifier.size(70.dp))
+                    } else {
+                        val painter = rememberImagePainter(
+                            data = profilePictureUrl ?: R.drawable.grid_home3,
+                            builder = {
+                                placeholder(R.drawable.grid_home3)
+                                error(R.drawable.grid_home3)
+                            }
+                        )
 
-                Spacer(modifier = Modifier.width(16.dp))
+                        Icon(
+                            imageVector = Icons.Default.PersonAddAlt1,
+                            contentDescription = "Ícone de perfil",
+                            modifier = Modifier
+                                .size(70.dp),
+                            tint = Color.Black
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.width(30.dp))
 
                 // Nome e informações
                 Column(
@@ -330,6 +379,9 @@ fun GerenciamentoConta(
                         coroutineScope.launch(Dispatchers.IO) {
                             val files =
                                 selectedImageUris.mapNotNull { uri -> uriToFile(context, uri) }
+
+                            selectedImageUris.clear()
+
                             if (files.isNotEmpty()) {
                                 val uploadedUrls =
                                     uploadService.uploadImagesToCloudinary(context, files)

@@ -31,6 +31,7 @@ import androidx.compose.material.icons.filled.Photo
 import androidx.compose.material.icons.filled.Whatsapp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -58,8 +59,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.example.northinkmobileandroid.R
+import com.example.northinkmobileandroid.api.service.UploadService
 import com.example.northinkmobileandroid.viewmodel.TatuadorViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 
 
 @Composable
@@ -67,7 +71,8 @@ fun PerfilTatuador(
     modifier: Modifier = Modifier,
     navController: NavController,
     tatuadorId: Long,
-    tatuadorViewModel: TatuadorViewModel
+    tatuadorViewModel: TatuadorViewModel,
+    uploadService: UploadService = UploadService()
 ) {
     Log.d("PerfilTatuador", "Recebendo userId na tela: $tatuadorId")
     var selectedTab by remember { mutableStateOf("Tattos") }
@@ -81,17 +86,33 @@ fun PerfilTatuador(
 
     val error by tatuadorViewModel.error.observeAsState()
 
+    var profilePictureUrl by remember { mutableStateOf<String?>(null) }
+
     // Carregar os dados ao iniciar
     LaunchedEffect(tatuadorId) {
         Log.d("PerfilTatuador", "Buscando portfólio para o tatuadorId: $tatuadorId")
         tatuadorViewModel.getTatuadorPortfolio(tatuadorId)
         delay(500)
         tatuadorViewModel.buscarImagensDoCloudinary()
-
     }
-
-
     val portfolio = tatuadorPortfolio
+
+    // Busca a imagem de perfil de forma assíncrona
+    LaunchedEffect(tatuadorId) {
+        val userId = portfolio?.id ?: tatuadorId
+        val userName = portfolio?.nome?.trim() ?: "usuario"
+        val folderPath = "tatuadores/$userId/$userName/profile_picture"
+
+        // Lançando a operação de rede em uma corrotina para evitar bloqueio na thread principal
+        try {
+            val imagens = withContext(Dispatchers.IO) {
+                uploadService.buscarImagensDaPastaCloudinary(folderPath)
+            }
+            profilePictureUrl = imagens.firstOrNull()
+        } catch (e: Exception) {
+            Log.e("PerfilTatuador", "Erro ao buscar imagens: ${e.message}")
+        }
+    }
 
     Column(
         modifier = modifier
@@ -132,14 +153,37 @@ fun PerfilTatuador(
                     .fillMaxWidth()
                     .padding(start = 50.dp)
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.grid_home3),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .size(100.dp)
-                        .clip(CircleShape)
-                )
+                // Exibe o indicador de carregamento enquanto a imagem não for carregada
+                if (profilePictureUrl == null) {
+
+                    Box(
+                        modifier = Modifier
+                            .size(100.dp)
+                            .clip(CircleShape)
+                            .background(Color.Gray.copy(alpha = 0.2f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(40.dp),
+                            color = iconColor
+                        )
+                    }
+                } else {
+                    // Exibe a imagem de perfil quando a URL estiver disponível
+                    Image(
+                        painter = rememberImagePainter(
+                            data = profilePictureUrl,
+                            builder = {
+                                // Aqui podemos usar um carregamento padrão, sem a necessidade de placeholder.
+                            }
+                        ),
+                        contentDescription = "Foto de perfil",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(100.dp)
+                            .clip(CircleShape)
+                    )
+                }
 
                 Spacer(modifier = Modifier.width(16.dp))
 

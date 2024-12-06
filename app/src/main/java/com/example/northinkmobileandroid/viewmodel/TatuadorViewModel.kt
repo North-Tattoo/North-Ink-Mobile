@@ -336,10 +336,6 @@
         ) {
             viewModelScope.launch {
                 try {
-                    // Recupera o userId e o token do SharedPreferences
-//                    val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-//                    val storedUserId = sharedPreferences.getLong("userId", -1L)
-//                    val token = sharedPreferences.getString("token", null)
 
                     val token = sessaoUsuario.token
                     val userId = sessaoUsuario.userId
@@ -380,13 +376,10 @@
         fun buscarImagensDoCloudinary() {
             viewModelScope.launch(Dispatchers.IO) {
                 try {
+                    val userId = sessaoUsuario.userId
+                    val userName = sessaoUsuario.nome.trim()
 
-                    val userId = 2
-                    Log.d("CloudinaryFetch", "userId: $userId") // Log antes de usar o userId
-                    val userName = "Sophia"
-                    Log.d("CloudinaryFetch", "userName: $userName") // Log antes de usar o userName
-                    val folderPath = "tatuadores/$userId/$userName"
-                    Log.d("CloudinaryFetch", "Caminho da pasta: $folderPath") // Log antes de criar o caminho
+                    val folderPath = "tatuadores/$userId/$userName/tattoos"
 
                     val imagens = uploadService.buscarImagensDaPastaCloudinary(folderPath)
                     Log.d("PastaCloudinary", "Buscando imagens para pasta: $folderPath")

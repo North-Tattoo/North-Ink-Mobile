@@ -30,12 +30,14 @@ class UploadService : KoinComponent {
 
         // Recupera o userId e o nome do usuário da sessão
         val userId = sessaoUsuario.userId.toString()
-        val userName = sessaoUsuario.nome.orEmpty()
+        val userName = sessaoUsuario.nome.trim()
 
-        val folderPath = "tatuadores/$userId/$userName/"
+        val folderPath = "tatuadores/$userId/$userName/tattoos"
 
         val client = OkHttpClient()
         val responses = mutableListOf<String?>()
+
+        Log.d("UploadService", "Arquivos selecionados: ${imageFiles.map { it.name }}")
 
         imageFiles.forEach { imageFile ->
             val requestBody = imageFile.asRequestBody("image/*".toMediaTypeOrNull())
@@ -46,6 +48,7 @@ class UploadService : KoinComponent {
                 .addFormDataPart("file", imageFile.name, requestBody)
                 .addFormDataPart("folder", folderPath)
                 .build()
+            Log.d("UploadService", "Enviando arquivo: ${imageFile.name}")
 
             val request = Request.Builder()
                 .url("https://api.cloudinary.com/v1_1/$cloudName/image/upload")
@@ -73,9 +76,9 @@ class UploadService : KoinComponent {
         val cloudName = "dvbc2jwny"
 
         val client = OkHttpClient.Builder()
-            .connectTimeout(30, TimeUnit.SECONDS)  // Timeout de conexão
-            .readTimeout(30, TimeUnit.SECONDS)     // Timeout de leitura
-            .writeTimeout(30, TimeUnit.SECONDS)    // Timeout de escrita
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
             .build()
 
         val request = Request.Builder()
@@ -105,5 +108,59 @@ class UploadService : KoinComponent {
             throw e
         }
     }
+
+    suspend fun uploadProfilePicture(context: Context, profileImageFile: File): String? {
+        val apiKey = "883746148284493"
+        val uploadPreset = "upload-tatto"
+        val cloudName = "dvbc2jwny"
+
+        val sessaoUsuario: SessaoUsuario by inject()
+
+        val userId = sessaoUsuario.userId.toString()
+        val userName = sessaoUsuario.nome.trim()
+
+            val folderPath = "tatuadores/$userId/$userName/profile_picture/"
+
+        val client = OkHttpClient.Builder()
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
+            .build()
+
+        Log.d("UploadService", "Enviando foto de perfil: ${profileImageFile.name}")
+
+        val requestBody = profileImageFile.asRequestBody("image/*".toMediaTypeOrNull())
+
+        val formBody = MultipartBody.Builder()
+            .setType(MultipartBody.FORM)
+            .addFormDataPart("upload_preset", uploadPreset)
+            .addFormDataPart("file", profileImageFile.name, requestBody)
+            .addFormDataPart("folder", folderPath)
+            .build()
+
+        val request = Request.Builder()
+            .url("https://api.cloudinary.com/v1_1/$cloudName/image/upload")
+            .post(formBody)
+            .build()
+
+        return try {
+            val response = client.newCall(request).execute()
+            val responseBody = response.body?.string()
+
+            if (!response.isSuccessful) {
+                Log.e("UploadService", "Erro no upload da foto de perfil: ${response.code}")
+                throw Exception("Erro ao fazer upload da foto de perfil: ${response.code}")
+            }
+
+            val jsonResponse = JSONObject(responseBody.orEmpty())
+            jsonResponse.optString("secure_url", null).also {
+                Log.d("UploadService", "Foto de perfil enviada com sucesso: $it")
+            }
+        } catch (e: Exception) {
+            Log.e("UploadService", "Erro ao enviar a foto de perfil: ${e.message}", e)
+            null
+        }
+    }
+
 
 }
