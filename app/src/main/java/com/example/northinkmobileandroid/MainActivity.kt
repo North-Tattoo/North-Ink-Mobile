@@ -50,7 +50,6 @@ import com.example.northinkmobileandroid.ui.Home
 import com.example.northinkmobileandroid.ui.ListagemTatuador
 import com.example.northinkmobileandroid.ui.Login
 import com.example.northinkmobileandroid.ui.PerfilTatuador
-import com.example.northinkmobileandroid.ui.TesteImagens
 import com.example.northinkmobileandroid.ui.theme.NorthInkMobileAndroidTheme
 
 
@@ -121,12 +120,6 @@ fun BarraInferiorNavegacao(
             }
             composable("gerenciamentoConta") {
                 GerenciamentoConta(
-                    navController = navController,
-                    tatuadorViewModel = tatuadorViewModel
-                )
-            }
-            composable("testeImagens") {
-                TesteImagens(
                     navController = navController,
                     tatuadorViewModel = tatuadorViewModel
                 )

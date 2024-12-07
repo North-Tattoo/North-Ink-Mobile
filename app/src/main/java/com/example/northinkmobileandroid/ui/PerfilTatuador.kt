@@ -62,7 +62,6 @@ import com.example.northinkmobileandroid.R
 import com.example.northinkmobileandroid.api.service.UploadService
 import com.example.northinkmobileandroid.viewmodel.TatuadorViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
 
@@ -87,30 +86,32 @@ fun PerfilTatuador(
     val error by tatuadorViewModel.error.observeAsState()
 
     var profilePictureUrl by remember { mutableStateOf<String?>(null) }
+    var portfolioImages by remember { mutableStateOf<List<String>>(emptyList()) }
 
-    // Carregar os dados ao iniciar
-    LaunchedEffect(tatuadorId) {
-        Log.d("PerfilTatuador", "Buscando portfólio para o tatuadorId: $tatuadorId")
-        tatuadorViewModel.getTatuadorPortfolio(tatuadorId)
-        delay(500)
-        tatuadorViewModel.buscarImagensDoCloudinary()
-    }
     val portfolio = tatuadorPortfolio
 
-    // Busca a imagem de perfil de forma assíncrona
     LaunchedEffect(tatuadorId) {
-        val userId = portfolio?.id ?: tatuadorId
-        val userName = portfolio?.nome?.trim() ?: "usuario"
-        val folderPath = "tatuadores/$userId/$userName/profile_picture"
-
-        // Lançando a operação de rede em uma corrotina para evitar bloqueio na thread principal
         try {
-            val imagens = withContext(Dispatchers.IO) {
-                uploadService.buscarImagensDaPastaCloudinary(folderPath)
+            Log.d("PerfilTatuador", "Buscando dados para o tatuadorId: $tatuadorId")
+
+            // Carregar o portfólio
+            tatuadorViewModel.getTatuadorPortfolio(tatuadorId)
+
+            val userName = tatuadorPortfolio?.nome?.trim() ?: "usuario"
+
+            // Buscar imagens do portfólio diretamente pelo UploadService
+            val portfolioFolder = "tatuadores/$tatuadorId/$userName/tattoos"
+            portfolioImages = withContext(Dispatchers.IO) {
+                uploadService.buscarImagensDaPastaCloudinary(portfolioFolder)
             }
-            profilePictureUrl = imagens.firstOrNull()
+
+            // Buscar imagem de perfil
+            val profilePictureFolder = "tatuadores/$tatuadorId/$userName/profile_picture"
+            profilePictureUrl = withContext(Dispatchers.IO) {
+                uploadService.buscarImagensDaPastaCloudinary(profilePictureFolder).firstOrNull()
+            }
         } catch (e: Exception) {
-            Log.e("PerfilTatuador", "Erro ao buscar imagens: ${e.message}")
+            Log.e("PerfilTatuador", "Erro ao buscar dados: ${e.message}")
         }
     }
 
@@ -296,39 +297,38 @@ fun PerfilTatuador(
                 .background(Color.White)
         ) {
             if (selectedTab == "Tattos") {
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(1.5.dp),
-                    horizontalArrangement = Arrangement.spacedBy(1.5.dp)
-                ) {
-                    items(imagens) { imageUrl ->
-                        if (imagens.isEmpty()) {
-                            Text(
-                                text = "Nenhuma imagem encontrada.",
-                                modifier = Modifier.align(Alignment.CenterHorizontally)
-                            )
-                        }
-
-                        Image(
-                            painter = rememberImagePainter(
-                                data = imageUrl,
-                                builder = {
-                                    crossfade(true)
-                                    placeholder(R.drawable.grid_home3)
-                                    error(R.drawable.tatuagem_card3)
-                                }
-                            ),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(150.dp)
-                                .clip(RoundedCornerShape(8.dp)),
-                            contentScale = ContentScale.Crop
+                    if (portfolioImages.isEmpty()) {
+                        Text(
+                            text = "Nenhuma imagem encontrada.",
+                            modifier = Modifier.align(Alignment.CenterHorizontally),
+                            color = Color.Gray
                         )
-
+                    } else {
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(2),
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.spacedBy(1.5.dp),
+                            horizontalArrangement = Arrangement.spacedBy(1.5.dp)
+                        ) {
+                            items(portfolioImages) { imageUrl ->
+                                Image(
+                                    painter = rememberImagePainter(
+                                        data = imageUrl,
+                                        builder = {
+                                            crossfade(true)
+                                            placeholder(R.drawable.grid_home3)
+                                            error(R.drawable.tatuagem_card3)
+                                        }
+                                    ),
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .size(150.dp)
+                                        .clip(RoundedCornerShape(8.dp)),
+                                    contentScale = ContentScale.Crop
+                                )
+                            }
+                        }
                     }
-                }
             } else {
                 LazyColumn(
                     modifier = Modifier

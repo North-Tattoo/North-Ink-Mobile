@@ -48,7 +48,7 @@ import androidx.navigation.NavHostController
 import android.widget.Toast
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.material3.Text 
+import androidx.compose.material3.Text
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberImagePainter
@@ -193,28 +193,23 @@ fun ListagemTatuador(navController: NavHostController, modifier: Modifier = Modi
 @Composable
 fun SessaoCardsTatuadores(
     tatuador: TatuadorListagem,
-    navController: NavHostController,
-    tatuadorViewModel: TatuadorViewModel = viewModel()
+    navController: NavHostController
 ) {
-    val imagensPortifolio by tatuadorViewModel.imagensPortifolio.observeAsState(initial = emptyList())
-
+    val imagensPortifolio = remember { mutableStateOf<List<String>>(emptyList()) }
     var profilePictureUrl by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(tatuador.id) {
-        tatuadorViewModel.buscarImagensDoCloudinary()
-    }
-
-    // Busca a imagem de perfil do Cloudinary
-    LaunchedEffect(tatuador.id) {
         val userId = tatuador.id
-        val userName = tatuador.nome?.trim() ?: "usuario"
-        val folderPath = "tatuadores/$userId/$userName/profile_picture"
-
+        val userName = tatuador.nome.trim()
         try {
-            val imagens = withContext(Dispatchers.IO) {
-                UploadService().buscarImagensDaPastaCloudinary(folderPath)
+            val folderPathPortfolio = "tatuadores/$userId/$userName/tattoos"
+            val folderPathProfile = "tatuadores/$userId/$userName/profile_picture"
+
+            withContext(Dispatchers.IO) {
+                imagensPortifolio.value = UploadService().buscarImagensDaPastaCloudinary(folderPathPortfolio)
+                val imagensProfile = UploadService().buscarImagensDaPastaCloudinary(folderPathProfile)
+                profilePictureUrl = imagensProfile.firstOrNull()
             }
-            profilePictureUrl = imagens.firstOrNull()
         } catch (e: Exception) {
             Log.e("SessaoCardsTatuadores", "Erro ao buscar imagens: ${e.message}")
         }
@@ -229,12 +224,6 @@ fun SessaoCardsTatuadores(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        val tatuagensMocadas = listOf(
-            Tatuagem(imagemUrl = R.drawable.grid_home3),
-            Tatuagem(imagemUrl = R.drawable.grid_home3),
-            Tatuagem(imagemUrl = R.drawable.grid_home3)
-        )
-
         // Exemplo de Card de Profissional
         CardProfissional(
             navController = navController,
@@ -246,7 +235,7 @@ fun SessaoCardsTatuadores(
             precoMinimo = tatuador.precoMin ?: 0.0,
             estilos = tatuador.estilos,
             fotoTatuador =  profilePictureUrl,
-            fotosTatuagens = imagensPortifolio.take(3),
+            fotosTatuagens = imagensPortifolio.value.take(3)
 
         )
     }
@@ -285,22 +274,27 @@ fun CardProfissional(
                     .horizontalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                fotosTatuagens?.forEach { imagemUrl ->
-                    val painter = if (imagemUrl != null) {
-                        rememberImagePainter(data = imagemUrl)
-                    } else {
-                        painterResource(id = R.drawable.tatuagem_card3)
-                    }
-
-                    Image(
-                        painter = painter,
-                        contentDescription = "Foto da tatuagem",
-                        modifier = Modifier
-                            .size(120.dp)
-                            .clip(RoundedCornerShape(8.dp)),
-                        contentScale = ContentScale.Crop
+                if (fotosTatuagens.isNullOrEmpty()) {
+                    Text(
+                        text = "Carregando imagens...",
+                        fontSize = 14.sp,
+                        color = Color.Gray,
+                        modifier = Modifier.padding(16.dp)
                     )
+                } else {
+                    fotosTatuagens.forEach { imagemUrl ->
+                        val painter = rememberImagePainter(data = imagemUrl)
+                        Image(
+                            painter = painter,
+                            contentDescription = "Foto da tatuagem",
+                            modifier = Modifier
+                                .size(320.dp)
+                                .clip(RoundedCornerShape(8.dp)),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
                 }
+
             }
 
             Spacer(modifier = Modifier.height(30.dp))

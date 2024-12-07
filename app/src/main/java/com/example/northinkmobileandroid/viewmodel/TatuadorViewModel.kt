@@ -373,12 +373,10 @@
         private val _imagensPortifolio = MutableLiveData<List<String>>()
         val imagensPortifolio: LiveData<List<String>> = _imagensPortifolio
 
-        fun buscarImagensDoCloudinary() {
+        fun buscarImagensDoCloudinary(userId: Long, userName: String) {
             viewModelScope.launch(Dispatchers.IO) {
                 try {
-                    val userId = sessaoUsuario.userId
-                    val userName = sessaoUsuario.nome.trim()
-
+                    userName.trim()
                     val folderPath = "tatuadores/$userId/$userName/tattoos"
 
                     val imagens = uploadService.buscarImagensDaPastaCloudinary(folderPath)
