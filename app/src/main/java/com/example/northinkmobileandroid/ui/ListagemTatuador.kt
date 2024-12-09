@@ -237,8 +237,8 @@ fun SessaoCardsTatuadores(
         val userId = tatuador.id
         val userName = tatuador.nome.trim()
         try {
-            val folderPathPortfolio = "tatuadores/$userId/$userName/tattoos"
-            val folderPathProfile = "tatuadores/$userId/$userName/profile_picture"
+            val folderPathPortfolio = "${userId}_${userName}/tattos_images"
+            val folderPathProfile = "${userId}_${userName}/profile_picture"
 
             withContext(Dispatchers.IO) {
                 imagensPortifolio.value = UploadService().buscarImagensDaPastaCloudinary(folderPathPortfolio)

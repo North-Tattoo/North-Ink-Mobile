@@ -20,19 +20,22 @@ import java.util.concurrent.TimeUnit
 
 class UploadService : KoinComponent {
 
-    suspend fun uploadImagesToCloudinary(context: Context, imageFiles: List<File>): List<String?> {
-        val apiKey = "883746148284493"
-        val uploadPreset = "upload-tatto"
-        val cloudName = "dvbc2jwny"
+    private val apiKey = "952586686127968"
+    private val apiSecret = "A9McRS4nxKJlqOdyltdIGW5LB7g"
+    private val cloudName = "dpacgzko0"
+    private val uploadPreset = "a4o1v5pq"
 
-        // Recupera o SessaoUsuario via Koin
+    private fun getUserFolderPath(sessaoUsuario: SessaoUsuario): String {
+        val userId = sessaoUsuario.userId.toString()
+        val userName = sessaoUsuario.nome.trim().replace(" ", "_")
+        return "${userId}_$userName"
+    }
+
+    suspend fun uploadImagesToCloudinary(context: Context, imageFiles: List<File>): List<String?> {
+
         val sessaoUsuario: SessaoUsuario by inject()
 
-        // Recupera o userId e o nome do usuário da sessão
-        val userId = sessaoUsuario.userId.toString()
-        val userName = sessaoUsuario.nome.trim()
-
-        val folderPath = "tatuadores/$userId/$userName/tattoos"
+        val folderPath = "${getUserFolderPath(sessaoUsuario)}/tattos_images"
 
         val client = OkHttpClient()
         val responses = mutableListOf<String?>()
@@ -71,9 +74,6 @@ class UploadService : KoinComponent {
 //    FUNÇÃO QUE BUSCA AS IMAGENS DO CLOUDINARY
 
     suspend fun buscarImagensDaPastaCloudinary(folderPath: String): List<String> {
-        val apiKey = "883746148284493"
-        val apiSecret = "hSi_o9GWcuM5fJi3fvm7VHHMryo"
-        val cloudName = "dvbc2jwny"
 
         val client = OkHttpClient.Builder()
             .connectTimeout(30, TimeUnit.SECONDS)
@@ -110,16 +110,9 @@ class UploadService : KoinComponent {
     }
 
     suspend fun uploadProfilePicture(context: Context, profileImageFile: File): String? {
-        val apiKey = "883746148284493"
-        val uploadPreset = "upload-tatto"
-        val cloudName = "dvbc2jwny"
 
         val sessaoUsuario: SessaoUsuario by inject()
-
-        val userId = sessaoUsuario.userId.toString()
-        val userName = sessaoUsuario.nome.trim()
-
-            val folderPath = "tatuadores/$userId/$userName/profile_picture/"
+        val folderPath = "${getUserFolderPath(sessaoUsuario)}/profile_picture"
 
         val client = OkHttpClient.Builder()
             .connectTimeout(30, TimeUnit.SECONDS)

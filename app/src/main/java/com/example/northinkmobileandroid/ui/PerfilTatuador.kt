@@ -80,8 +80,6 @@ fun PerfilTatuador(
     val context = LocalContext.current
 
     val tatuadorPortfolio by tatuadorViewModel.tatuadorPortfolio.observeAsState()
-    val imagens by tatuadorViewModel.imagensPortifolio.observeAsState(emptyList())
-    Log.d("PerfilTatuador", "imagens: $imagens")
 
     val error by tatuadorViewModel.error.observeAsState()
 
@@ -100,15 +98,18 @@ fun PerfilTatuador(
             val userName = tatuadorPortfolio?.nome?.trim() ?: "usuario"
 
             // Buscar imagens do portfólio diretamente pelo UploadService
-            val portfolioFolder = "tatuadores/$tatuadorId/$userName/tattoos"
+            val portfolioFolder = "${tatuadorId}_${userName}/tattos_images"
             portfolioImages = withContext(Dispatchers.IO) {
                 uploadService.buscarImagensDaPastaCloudinary(portfolioFolder)
             }
 
+            Log.d("PerfilTatuador", "imagens: $profilePictureUrl")
+
             // Buscar imagem de perfil
-            val profilePictureFolder = "tatuadores/$tatuadorId/$userName/profile_picture"
+            val profilePictureFolder = "${tatuadorId}_${userName}/profile_picture"
             profilePictureUrl = withContext(Dispatchers.IO) {
                 uploadService.buscarImagensDaPastaCloudinary(profilePictureFolder).firstOrNull()
+
             }
         } catch (e: Exception) {
             Log.e("PerfilTatuador", "Erro ao buscar dados: ${e.message}")
