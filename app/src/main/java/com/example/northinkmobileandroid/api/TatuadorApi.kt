@@ -18,6 +18,7 @@ import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface TatuadorApi {
 
@@ -54,5 +55,14 @@ interface TatuadorApi {
     suspend fun criarEndereco(
         @Header("Authorization") token: String,
         @Body endereco: EnderecoCriacao): Response<Endereco>
+
+    @GET("api/usuarios/buscar")
+    suspend fun buscarTatuadores(
+        @Query("nome") nome: String?,
+        @Query("cidade") cidade: String?,
+        @Query("precoMinimo") precoMinimo: Double?,
+        @Query("estilos") estilos: String?,
+        @Header("Authorization") token: String,
+    ): List<TatuadorListagem>
 
 }

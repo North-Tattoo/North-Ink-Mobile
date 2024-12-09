@@ -20,6 +20,7 @@
     import com.example.northinkmobileandroid.data.model.Estudio
     import com.example.northinkmobileandroid.data.model.EstudioCriacao
     import com.example.northinkmobileandroid.data.model.TatuadorAtualizacaoPortifolio
+    import com.example.northinkmobileandroid.data.model.TatuadorListagem
     import com.example.northinkmobileandroid.data.model.TatuadorListagemPortifolio
     import com.example.northinkmobileandroid.di.SessaoUsuario
     import kotlinx.coroutines.Dispatchers

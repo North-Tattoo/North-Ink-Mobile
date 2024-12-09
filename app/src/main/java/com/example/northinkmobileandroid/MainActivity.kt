@@ -51,8 +51,7 @@ import com.example.northinkmobileandroid.ui.ListagemTatuador
 import com.example.northinkmobileandroid.ui.Login
 import com.example.northinkmobileandroid.ui.PerfilTatuador
 import com.example.northinkmobileandroid.ui.theme.NorthInkMobileAndroidTheme
-
-
+import org.koin.androidx.compose.get
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -96,7 +95,8 @@ fun BarraInferiorNavegacao(
                 Home(navController = navController)
             }
             composable("listagem") {
-                ListagemTatuador(navController)
+                val sessaoUsuario: SessaoUsuario = get()
+                ListagemTatuador(navController, sessaoUsuario = sessaoUsuario)
             }
             composable("login") {
                 Login(navController = navController)

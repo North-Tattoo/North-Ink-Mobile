@@ -49,24 +49,29 @@ import android.widget.Toast
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.material3.Text
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberImagePainter
 import com.example.northinkmobileandroid.data.model.Estilo
 import com.example.northinkmobileandroid.R
 import com.example.northinkmobileandroid.api.RetrofitInstance
 import com.example.northinkmobileandroid.api.service.UploadService
 import com.example.northinkmobileandroid.data.model.TatuadorListagem
-import com.example.northinkmobileandroid.data.model.Tatuagem
-import com.example.northinkmobileandroid.viewmodel.TatuadorViewModel
+import com.example.northinkmobileandroid.di.SessaoUsuario
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Composable
-fun ListagemTatuador(navController: NavHostController, modifier: Modifier = Modifier) {
+fun ListagemTatuador(
+    navController: NavHostController,
+    sessaoUsuario: SessaoUsuario,
+    modifier: Modifier = Modifier
+) {
     val scrollState = rememberScrollState()
     val tatuadores = remember { mutableStateOf<List<TatuadorListagem>>(emptyList()) }
     val context = LocalContext.current
+    val nome = remember { mutableStateOf("") }
+    val cidade = remember { mutableStateOf("") }
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         try {
@@ -119,19 +124,49 @@ fun ListagemTatuador(navController: NavHostController, modifier: Modifier = Modi
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier.fillMaxWidth()
-                )  {
+                ){
+//                    input que insere o nome
                     CustomOutlinedTextField(
                         label = stringResource(id = R.string.label_listagem1),
+                        text = nome.value,
+                        onValueChange = { nome.value = it },
                         modifier = Modifier
                             .weight(1f)
                             .padding(end = 8.dp)
                     )
+//                    Input que insere a cidade
                     CustomOutlinedTextField(
                         label = stringResource(id = R.string.label_listagem2),
+                        text = cidade.value,
+                        onValueChange = { cidade.value = it },
                         modifier = Modifier
                             .weight(1f)
                             .padding(start = 8.dp)
                     )
+                }
+                Button(
+                    onClick = {
+                        scope.launch {
+                            try {
+                                val token = sessaoUsuario.token
+                                val resultado = RetrofitInstance.tatuadorApi.buscarTatuadores(
+                                    nome = nome.value,
+                                    cidade = cidade.value,
+                                    precoMinimo = null,
+                                    estilos = null,
+                                    token = "Bearer $token"
+                                )
+                                tatuadores.value = resultado
+                                Log.d("ListagemTatuador", "Busca realizada com sucesso: ${resultado.size} tatuadores encontrados")
+                            } catch (e: Exception) {
+                                Log.e("ListagemTatuador", "Erro na busca: ${e.message}")
+                                Toast.makeText(context, "Erro na busca: ${e.message}", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    },
+                    modifier = Modifier.padding(top = 8.dp)
+                ) {
+                    Text("Pesquisar")
                 }
             }
         }
@@ -458,16 +493,14 @@ fun CardProfissional(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomOutlinedTextField(label: String, modifier: Modifier = Modifier) {
-    var text by remember { mutableStateOf(TextFieldValue("")) }
-
+fun CustomOutlinedTextField(label: String, text: String, onValueChange: (String) -> Unit, modifier: Modifier = Modifier) {
     OutlinedTextField(
         value = text,
-        onValueChange = { text = it },
+        onValueChange = onValueChange,
         label = { Text(label) },
         modifier = modifier.fillMaxWidth(),
         singleLine = true,
-        shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp),
+        shape = RoundedCornerShape(8.dp),
         colors = TextFieldDefaults.outlinedTextFieldColors(
             focusedBorderColor = Color(0xFFA855F7),
             unfocusedBorderColor = Color(0xFFA855F7),
@@ -476,7 +509,6 @@ fun CustomOutlinedTextField(label: String, modifier: Modifier = Modifier) {
             containerColor = Color.White,
             focusedTextColor = Color.Black,
             unfocusedTextColor = Color.Black
-
         ),
         keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done)
     )
